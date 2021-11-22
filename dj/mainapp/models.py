@@ -1,14 +1,8 @@
 from django.db import models
-# from django import forms
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 
-# 1. Клиенты банка - физические и юридические лица
-class Clients(models.Model):
-    login = models.CharField(max_length=64)
-    password = models.CharField(max_length=64)
-    fullname = models.CharField(max_length=64)
-
+# 1. User из "коробки" - Пользователи
 
 # 2. Валюты
 class Currencies(models.Model):
@@ -27,7 +21,7 @@ class Courses(models.Model):
 class Accounts(models.Model):
     currency = models.IntegerField()
     balance = models.DecimalField(max_digits=21, decimal_places=6)
-    clients = models.ManyToManyField(Clients, related_name="clients")
+    clients = models.ManyToManyField(User, related_name="clients")
 
 
 # 5. Карты клиентов
@@ -36,22 +30,20 @@ class Cards(models.Model):
     cardholder_name = models.CharField(max_length=30)
     expiration_date = models.DateField()
     security_code = models.IntegerField()
-    client = models.ForeignKey(Clients, on_delete=models.CASCADE)
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 # 6. Шаблоны операций (#7)
 class Templates(models.Model):
     description = models.CharField(max_length=64)
-    # receiver = models.ForeignKey(Clients, related_name="receiver", on_delete=models.CASCADE)
-    # currency = models.ForeignKey(Currencies, related_name="currency", on_delete=models.CASCADE)
 
 
 # 7. Операции
 class Operations(models.Model):
     template = models.ForeignKey(Templates, on_delete=models.CASCADE)
     time = models.TimeField()
-    sender = models.ForeignKey(Clients, related_name="sender", on_delete=models.CASCADE)
-    receiver = models.ForeignKey(Clients, related_name="receiver", on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6)

@@ -88,3 +88,5 @@ CREATE TABLE transactions
     is_active  bool           not null default true
 );
 drop table transactions;
+
+SELECT * from auth_user;

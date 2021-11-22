@@ -1,45 +1,44 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
 from .models import *
+from .forms import *
 
 
-# получение данных из бд
+# Главная страница
 def index(request):
-    clients = Clients.objects.all()
-    return render(request, "registration.html", {"clients": clients})
+    if request.user.is_authenticated:
+        return render(request, "index.html", {"user": request.user.get_username})
+    else:
+        return render(request, "index.html", {"user": "Anonymous"})
 
 
-# сохранение данных в бд
+# сохранение пользователей
 def register(request):
     if request.method == "POST":
-        client = Clients()
-        client.login = request.POST.get("login")
-        client.fullname = request.POST.get("fullname")
-        client.password = request.POST.get("password")
-        client.save()
+        user_form = UserRegistration(request.POST)
+        if not user_form.is_valid():
+            return render(request, "index.html",
+                          {"user": "самый умный? Давай нормально регайся и оформляй кредитик"})
+        else:
+            username = request.POST.get("username")
+            first_name = request.POST.get("first_name")
+            password = request.POST.get("password")
+            confirm_password = request.POST.get("confirm_password")
+            if password == confirm_password:
+                user = User(
+                    username=username,
+                    first_name=first_name,
+                    password=password
+                )
+                user.save()
+                login(request, user)
+                return HttpResponseRedirect("/")
+
+    user_form = UserRegistration()
+    return render(request, "registration/login.html", {"form": user_form})
+
+
+def log_out(request):
+    logout(request)
     return HttpResponseRedirect("/")
-
-
-# # получение данных из бд
-# def index(request):
-#     people = Person.objects.all()
-#     return render(request, "registration.html", {"people": people})
-#
-#
-# # сохранение данных в бд
-# def create(request):
-#     if request.method == "POST":
-#         man = Person()
-#         man.name = request.POST.get("name")
-#         man.age = request.POST.get("age")
-#         man.save()
-#     return HttpResponseRedirect("/")
-#
-#
-# # удаление всех данных из бд
-# def delete(request):
-#     if request.method == "POST":
-#         people = Person.objects.all()
-#         print("DELETING PERSON", people)
-#         people.delete()
-#     return HttpResponseRedirect("/")

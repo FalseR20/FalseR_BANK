@@ -1,15 +1,14 @@
 from django.contrib import admin
-from django.urls import path, re_path
-from django.contrib.auth import views as authviews
+from django.urls import path
+from django.contrib.auth import views as auth_views
 
 from mainapp import views
 
 urlpatterns = [
-    path('', views.index),
-    path('login/', authviews.LoginView.as_view(), name='login'),
+    path('', views.index, name="home"),
+    path('login/', auth_views.LoginView.as_view()),
     path('register/', views.register),
-    # path('create/', views.create),
-    # path('delete/', views.delete),
+    path('logout/', views.log_out),
 
     path('admin/', admin.site.urls),
 ]
