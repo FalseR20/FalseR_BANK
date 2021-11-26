@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Default title{% endblock title %}</title></head>
+<link rel="stylesheet" href="styles.css"/>
+<style>
+    .topButtonsTable td a button {
+        background: #999999;
+        border: aliceblue;
+        color: blue;
+        /*border*/
+    }
+</style>
+
+<body>
+<table class="topButtonsTable">
+    <td>
+        <a href="/">
+            <button>Main menu</button>
+        </a>
+    </td>
+    <td>
+        <a href="/logup">
+            <button>Log up</button>
+        </a>
+    </td>
+    <td>
+        <a href="/login">
+            <button>Log in</button>
+        </a>
+    </td>
+</table>
+<br/>
+{% block body%}{% endblock body %}
+</body>
+</html>

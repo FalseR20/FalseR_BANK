@@ -14,7 +14,7 @@ def index(request):
 
 
 # сохранение пользователей
-def register(request):
+def log_up(request):
     if request.method == "POST":
         user_form = UserRegistration(request.POST)
         if not user_form.is_valid():
@@ -36,7 +36,7 @@ def register(request):
                 return HttpResponseRedirect("/")
 
     user_form = UserRegistration()
-    return render(request, "registration/login.html", {"form": user_form})
+    return render(request, "registration/login.html", {"title": "Log up", "form": user_form})
 
 
 def log_out(request):
