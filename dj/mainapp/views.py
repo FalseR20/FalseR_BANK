@@ -36,7 +36,7 @@ def log_up(request):
                 return HttpResponseRedirect("/")
 
     user_form = UserRegistration()
-    return render(request, "registration/login.html", {"title": "Log up", "form": user_form})
+    return render(request, "registration/login.html", {"title": "Sign Up", "form": user_form})
 
 
 def log_out(request):
