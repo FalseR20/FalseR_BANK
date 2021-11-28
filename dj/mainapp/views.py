@@ -29,8 +29,8 @@ def log_up(request):
                 user = User(
                     username=username,
                     first_name=first_name,
-                    password=password
                 )
+                user.set_password(password)
                 user.save()
                 login(request, user)
                 return HttpResponseRedirect("/")

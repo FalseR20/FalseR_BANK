@@ -89,4 +89,7 @@ CREATE TABLE transactions
 );
 drop table transactions;
 
-SELECT * from auth_user;
+SELECT username, password, is_superuser from auth_user;
+
+delete from auth_user
+where is_superuser = false;
