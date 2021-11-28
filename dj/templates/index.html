@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 {% block head %}
     <title>Main Page</title>
+    <style>
+    li {
+        font-size: 25px;
+    }
+    </style>
 {% endblock head %}
-{% block body%}
-<h1>Привет, {{user}}</h1>
+{% block body %}
+    <h1>Привет, {{ user }}, ваши владения:</h1>
+    <ol>
+        <li>Карты: {{ cards.count }}</li>
+        <ul>
+            {% for card in cards %}
+                <li> {{ card.number }}: {{ card.account.balance }} {{ card.account.currency.code }}</li>
+            {% endfor %}
+        </ul>
+    </ol>
 {% endblock body %}

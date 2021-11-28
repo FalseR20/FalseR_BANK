@@ -1,95 +1,50 @@
--- #1 таблица с клиентами
-create table clients
-(
-    id        serial primary key,
-    login     char(64) not null,
-    password  char(64) not null,
-    full_name char(64) not null
-);
-drop table clients;
+-- users and clients
+SELECT id, username, password, is_superuser
+FROM auth_user;
+
+DELETE
+FROM auth_user
+WHERE is_superuser = false;
+
+select *
+from mainapp_clients;
+
+-- default currencies
+INSERT INTO mainapp_currencies(code)
+values ('BYN'),
+       ('USD');
+
+select *
+from mainapp_currencies;
+
+-- default courses
+insert into mainapp_courses(course_buy, course_sale, change_time, currency_id)
+VALUES (1000000, 1000000, now(), 1),
+       (2500000, 2500000, now(), 2);
+
+select *
+from mainapp_courses;
+
+-- default account for user2
+insert into mainapp_accounts (currency, balance)
+values (1, 1000);
+
+select *
+from mainapp_accounts;
+
+insert into mainapp_accounts_clients (id, accounts_id, clients_id)
+values (1, 3, 1);
+
+select *
+from mainapp_accounts_clients;
 
 
--- #2 справочник с валютами
-create table currencies
-(
-    id   serial primary key,
-    code char(3) not null -- ISO 4217
-    -- country char(30) null
-);
-drop table currencies;
+-- default card for user2
+select *
+from mainapp_cards;
 
+INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, account_id, client_id)
+values (0123456789101112, 'user1', now(), 123, 3, 1);
 
--- #3 таблица с курсами валют
-create table courses
-(
-    id          bigserial primary key,
-    currency    int       not null references currencies (id),
-    course_buy  bigint    not null, -- in BYN  надо же
-    course_sale bigint    not null, -- in BYN  процентики забирать
-    change_time timestamp not null default now()
-);
-drop table courses;
-
-
--- #4 таблица со счетами
-create table accounts
-(
-    id       serial primary key,
-    currency int            not null references currencies (id),
-    balance  decimal(15, 6) not null
-);
-drop table accounts;
-
-
--- #5 таблица доступа клиентов к счетам (для реализации many-to-many)
-create table access
-(
-    person_id  int not null references clients (id),
-    account_id int not null references accounts (id)
-);
-drop table access;
-
-
--- #6 таблица с картами
-CREATE TABLE cards
-(
-    number          bigint primary key,
-    cardholder_name char(30) not null,
-    expiration_date date     not null,
-    security_code   int      not null,
-    account_id      int      not null references accounts (id),
-    cardholder_id   int      not null references clients (id)
-);
-drop table cards;
-
-
--- #7 таблица с шаблонами операций
-create table templates
-(
-    id          serial primary key,
-    description char(50) not null,
-    sender      int references clients (id),
-    receiver    int references clients (id)
-);
-drop table templates;
-
-
--- #8 таблица с транзакциями
-CREATE TABLE transactions
-(
-    id         serial primary key,
-    time       timestamp      not null default now(),
-    template   int references templates (id),
-    sender     int            not null references clients (id),
-    receiver   int            not null references clients (id),
-    currency   char(3)        not null,
-    value      decimal(15, 6) not null,
-    commission decimal(15, 6) not null,
-    is_active  bool           not null default true
-);
-drop table transactions;
-
-SELECT username, password, is_superuser from auth_user;
-
-delete from auth_user
-where is_superuser = false;
+INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, client_id)
+values (0000000000000000, 'user1', now(), 123, 1);

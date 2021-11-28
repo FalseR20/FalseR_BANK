@@ -8,7 +8,17 @@ from .forms import *
 # Главная страница
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "index.html", {"user": request.user.get_username})
+        if not request.user.is_staff:
+            client = Clients.objects.get(user=request.user.id)
+            return render(
+                request, "index.html",
+                {
+                    "user": request.user.get_username,
+                    "cards": Cards.objects.filter(client=client)
+                }
+            )
+        else:
+            return render(request, "base.html")
     else:
         return render(request, "guest.html")
 
@@ -21,17 +31,19 @@ def log_up(request):
             return render(request, "index.html",
                           {"user": "самый умный? Давай нормально регайся и оформляй кредитик"})
         else:
-            username = request.POST.get("username")
-            first_name = request.POST.get("first_name")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
             if password == confirm_password:
-                user = User(
-                    username=username,
-                    first_name=first_name,
-                )
-                user.set_password(password)
+                username = request.POST.get("username")
+                user = User(username=username)
+                user.set_password(password)  # с хешированием
                 user.save()
+
+                fullname = request.POST.get("fullname")
+                client = Clients(fullname=fullname)
+                client.user = user
+                client.save()
+
                 login(request, user)
                 return HttpResponseRedirect("/")
 
