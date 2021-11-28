@@ -4,6 +4,7 @@
     <style>
     li {
         font-size: 25px;
+        font-family: "Verdana", "Trebuchet MS", sans-serif;
     }
     </style>
 {% endblock head %}
@@ -11,9 +12,9 @@
     <h1>Привет, {{ user }}, ваши владения:</h1>
     <ol>
         <li>Карты: {{ cards.count }}</li>
-        <ul>
+        <ul style="list-style-type:disc">
             {% for card in cards %}
-                <li> {{ card.number }}: {{ card.account.balance }} {{ card.account.currency.code }}</li>
+                <li> {{ card.number }}: {{ card.account.balance|floatformat:2}} {{ card.account.currency.code }}</li>
             {% endfor %}
         </ul>
     </ol>

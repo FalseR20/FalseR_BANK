@@ -26,7 +26,7 @@ select *
 from mainapp_courses;
 
 -- default account for user2
-insert into mainapp_accounts (currency, balance)
+insert into mainapp_accounts (currency_id, balance)
 values (1, 1000);
 
 select *
@@ -40,11 +40,15 @@ from mainapp_accounts_clients;
 
 
 -- default card for user2
-select *
-from mainapp_cards;
-
 INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, account_id, client_id)
 values (0123456789101112, 'user1', now(), 123, 3, 1);
 
-INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, client_id)
-values (0000000000000000, 'user1', now(), 123, 1);
+INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, account_id, client_id)
+values (4255000000000000, 'user1', now(), 123, 3, 1);
+
+select *
+from mainapp_cards;
+
+delete
+FROM mainapp_cards
+where number != 0123456789101112;
