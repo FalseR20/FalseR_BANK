@@ -2,14 +2,25 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Default title{% endblock title %}</title></head>
-{#<link rel="stylesheet" href="styles.css"/>#}
 <style>
-    {#body {#}
-    {#    top: 50px;#}
-    {#    height: 1400px;#}
-    {#    margin: 0 auto;#}
-    {#  }#}
-    .topButton {
+    #divTop {
+        background-color: white;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+    }
+
+    #divBuffer {
+        -webkit-flex: auto;
+        flex: auto;
+    }
+
+    .buttonTop {
         padding: 5px 30px;
         margin: 7px 7px 14px 7px;
         background: transparent;
@@ -20,20 +31,17 @@
         font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
     }
 
-    .topButton:hover {
+    .buttonTop:hover {
         background: deeppink;
         color: white;
     }
 
-    .topDiv {
-        {#position: fixed;#}
-        background-color: white;
-        overflow: hidden;
-        top: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
+    #hrTop {
+        margin: 0 0 0 0;
+        border-style: solid;
+        border-color: lightgrey;
     }
+
 
     .mainDiv {
         overflow: auto;
@@ -43,31 +51,39 @@
 </style>
 
 <body>
-<div class="topDiv">
+<div id="divTop">
     <table>
-        <td>
-            <a href="/">
-                <button class="topButton">Main menu</button>
-            </a>
-        </td>
-        <td>
-            <a href="/log_up">
-                <button class="topButton">Log up</button>
-            </a>
-        </td>
-        <td>
-            <a href="/log_in">
-                <button class="topButton">Log in</button>
-            </a>
-        </td>
-        <td>
-            <a href="/log_out">
-                <button class="topButton">Log out</button>
-            </a>
-        </td>
+        <tr>
+            <td>
+                <a href="/">
+                    <button class="buttonTop">Main menu</button>
+                </a>
+            </td>
+            <td>
+                <a href="/log_up">
+                    <button class="buttonTop">Log up</button>
+                </a>
+            </td>
+            <td>
+                <a href="/log_in">
+                    <button class="buttonTop">Log in</button>
+                </a>
+            </td>
+        </tr>
     </table>
-    <hr style="margin: 0 0 0 0; border-style: outset;: dimgrey">
+    <div id="divBuffer">
+    </div>
+    <table>
+        <tr>
+            <td>
+                <a href="/log_out">
+                    <button class="buttonTop">Log out</button>
+                </a>
+            </td>
+        </tr>
+    </table>
 </div>
+<hr id="hrTop">
 
 <div class="mainDiv">
     {% block body %}{% endblock body %}
