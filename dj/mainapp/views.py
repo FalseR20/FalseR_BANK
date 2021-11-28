@@ -10,7 +10,7 @@ def index(request):
     if request.user.is_authenticated:
         return render(request, "index.html", {"user": request.user.get_username})
     else:
-        return render(request, "index.html", {"user": "Anonymous"})
+        return render(request, "guest.html")
 
 
 # сохранение пользователей
@@ -36,7 +36,7 @@ def log_up(request):
                 return HttpResponseRedirect("/")
 
     user_form = UserRegistration()
-    return render(request, "registration/login.html", {"title": "Sign Up", "form": user_form})
+    return render(request, "registration/logup.html", {"title": "Sign Up", "form": user_form})
 
 
 def log_out(request):

@@ -1,7 +1,16 @@
 <!DOCTYPE html>
+<html lang="en-us">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Default title{% endblock title %}</title></head>
+    <style>
+        h1 {
+            font-family: "Verdana", "Trebuchet MS", sans-serif;
+        }
+    </style>
+    {% block head %}
+        <title>Default title</title>
+    {% endblock head %}
+</head>
 <style>
     #divTop {
         background-color: white;
@@ -25,10 +34,10 @@
         margin: 7px 7px 14px 7px;
         background: transparent;
         color: deeppink;
-        border: 5px solid deeppink;
-        border-radius: 20px;
+        border: 4px solid deeppink;
+        border-radius: 15px;
         font-size: 20px;
-        font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+        font-family: "Verdana", "Trebuchet MS", sans-serif;
     }
 
     .buttonTop:hover {
@@ -37,13 +46,13 @@
     }
 
     #hrTop {
-        margin: 0 0 0 0;
+        margin: 0;
         border-style: solid;
         border-color: lightgrey;
     }
 
 
-    .mainDiv {
+    #divMain {
         overflow: auto;
         margin-top: 5px;
     }
@@ -53,39 +62,35 @@
 <body>
 <div id="divTop">
     <table>
-        <tr>
-            <td>
-                <a href="/">
-                    <button class="buttonTop">Main menu</button>
-                </a>
-            </td>
-            <td>
-                <a href="/log_up">
-                    <button class="buttonTop">Log up</button>
-                </a>
-            </td>
-            <td>
-                <a href="/log_in">
-                    <button class="buttonTop">Log in</button>
-                </a>
-            </td>
-        </tr>
+        <td>
+            <a href="/">
+                <button class="buttonTop">Main menu</button>
+            </a>
+        </td>
     </table>
     <div id="divBuffer">
     </div>
     <table>
-        <tr>
-            <td>
-                <a href="/log_out">
-                    <button class="buttonTop">Log out</button>
-                </a>
-            </td>
-        </tr>
+        <td>
+            <a href="/log_in">
+                <button class="buttonTop">Log in</button>
+            </a>
+        </td>
+        <td>
+            <a href="/log_up">
+                <button class="buttonTop">Log up</button>
+            </a>
+        </td>
+        <td>
+            <a href="/log_out">
+                <button class="buttonTop">Log out</button>
+            </a>
+        </td>
     </table>
 </div>
 <hr id="hrTop">
 
-<div class="mainDiv">
+<div id="divMain">
     {% block body %}{% endblock body %}
 </div>
 </body>
