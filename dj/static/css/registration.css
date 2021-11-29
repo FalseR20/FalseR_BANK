@@ -19,7 +19,7 @@ form {
     font-size: 14px;
 }
 
-.buttonSubmit {
+.button-submit {
     width: 150px;
     padding: 5px;
     margin-bottom: 15px;
@@ -31,7 +31,8 @@ form {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
 }
 
-.buttonSubmit:hover {
+.button-submit:hover {
     background: var(--bg-color);
     color: var(--theme-color);
 }
+

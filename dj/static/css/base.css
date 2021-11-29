@@ -1,29 +1,27 @@
-:root {
-    --bg-color: white;
-    --theme-color: deeppink;
+body {
+    margin: 0;
 }
-
 
 h1 {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
 }
 
-#divTop {
-    background-color: var(--bg-color);
+#div-top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: 1px solid var(--sep-color);
 }
 
-#divTop div {
+#div-top div {
     display: flex;
     flex-direction: row;
+    align-self: center;
 }
 
-.buttonTop {
+.button-top {
     padding: 5px 20px;
-    margin: 7px 7px 14px 10px;
-    background: var(--bg-color);
+    margin: 8px 8px 8px 10px;
     color: var(--theme-color);
     border: 4px solid var(--theme-color);
     border-radius: 15px;
@@ -32,19 +30,14 @@ h1 {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
 }
 
-.buttonTop:hover {
+.button-top:hover {
     background: var(--theme-color);
     color: var(--bg-color);
 }
 
-#hrTop {
-    margin: 0;
-    border-style: solid;
-    border-color: lightgrey;
-}
 
-
-#divMain {
-    overflow: auto;
+#div-main {
+    border-color: var(--bg-color);
     margin-top: 5px;
+    margin-left: 20px;
 }

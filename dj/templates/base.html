@@ -1,26 +1,27 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en-us">
 <head>
     <meta charset="UTF-8">
     {% block head %}
     <title>Default page</title>
     {% endblock head %}
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{% static 'css/themes/pink_light.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 <body>
-<div id="divTop">
+<div id="div-top">
     <div>
-        <a class="buttonTop" href="/">Main menu</a>
+        <a class="button-top" href="/">Main menu</a>
     </div>
     <div>
-        <a class="buttonTop" href="/log_in">Log in</a>
-        <a class="buttonTop" href="/log_up">Log up</a>
-        <a class="buttonTop" href="/log_out">Log out</a>
+        <a class="button-top" href="/log_in">Log in</a>
+        <a class="button-top" href="/log_up">Log up</a>
+        <a class="button-top" href="/log_out">Log out</a>
     </div>
 </div>
-<hr id="hrTop">
 
-<div id="divMain">
+<div id="div-main">
     {% block body %}
     <h1>Default text</h1>
     {% endblock body %}
