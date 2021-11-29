@@ -1,5 +1,5 @@
 -- users and clients
-SELECT id, username, password, is_superuser
+SELECT id, username, is_superuser, password
 FROM auth_user;
 
 DELETE
@@ -33,7 +33,7 @@ select *
 from mainapp_accounts;
 
 insert into mainapp_accounts_clients (id, accounts_id, clients_id)
-values (1, 3, 1);
+values (1, 1, 1);
 
 select *
 from mainapp_accounts_clients;
@@ -41,14 +41,14 @@ from mainapp_accounts_clients;
 
 -- default card for user2
 INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, account_id, client_id)
-values (0123456789101112, 'user1', now(), 123, 3, 1);
+values (1234567890101112, 'user1', now(), 123, 1, 1);
 
 INSERT INTO mainapp_cards (number, cardholder_name, expiration_date, security_code, account_id, client_id)
-values (4255000000000000, 'user1', now(), 123, 3, 1);
+values (4255000000000000, 'user1', now(), 123, 1, 1);
 
 select *
 from mainapp_cards;
 
 delete
-FROM mainapp_cards
-where number != 0123456789101112;
+FROM mainapp_cards;
+-- where number != 0123456789101112;
