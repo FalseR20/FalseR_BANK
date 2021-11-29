@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
-    <link rel="stylesheet" href="../../static/css/registration.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
     <title>Log Up</title>
 {% endblock head %}
 {% block body %}

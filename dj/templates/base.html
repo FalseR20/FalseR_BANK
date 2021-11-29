@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en-us">
 <head>
     <meta charset="UTF-8">
     {% block head %}
-    <title>Default page</title>
+        {% load static %}
+        <title>Default page</title>
     {% endblock head %}
     <link rel="stylesheet" href="{% static 'css/themes/pink_light.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -23,7 +23,7 @@
 
 <div id="div-main">
     {% block body %}
-    <h1>Default text</h1>
+        <h1>Default text</h1>
     {% endblock body %}
 </div>
 </body>
