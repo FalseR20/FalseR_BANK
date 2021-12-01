@@ -2,7 +2,7 @@
     --bg-color: #222;
     background-color: var(--bg-color);
     --theme-color: deeppink;
-    --sep-color: #555;
+    --sep-color: #333;
     --text-color: #ddd;
     color: var(--text-color);
 }

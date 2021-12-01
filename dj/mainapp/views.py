@@ -23,7 +23,7 @@ def index(request):
         return render(request, "guest.html")
 
 
-# сохранение пользователей
+# Регистрация
 def log_up(request):
     if request.method == "POST":
         user_form = UserRegistration(request.POST)
@@ -51,6 +51,12 @@ def log_up(request):
     return render(request, "registration/logup.html", {"title": "Sign Up", "form": user_form})
 
 
+# Вход
 def log_out(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+
+# Привязка карт
+def cards(request):
+    return render(request, "cards.html")
