@@ -1,8 +1,8 @@
 :root {
-    --bg-color: #222;
+    --bg-color: white;
     background-color: var(--bg-color);
     --theme-color: deeppink;
-    --sep-color: #555;
-    --text-color: #ddd;
+    --sep-color: #ccc;
+    --text-color: #111;
     color: var(--text-color);
 }

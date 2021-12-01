@@ -2,6 +2,13 @@ body {
     margin: 0;
 }
 
+@font-face {
+  font-family: 'SkyLuke';
+  src: local('SkyLuke'),
+       url('/static/fonts/SkyLuke.otf') format("opentype");
+}
+
+
 h1 {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
 }
@@ -23,16 +30,40 @@ h1 {
     padding: 5px 20px;
     margin: 8px 8px 8px 10px;
     color: var(--theme-color);
+    background: var(--bg-color);
     border: 4px solid var(--theme-color);
     border-radius: 15px;
     text-decoration: none;
     font-size: 20px;
     font-family: "Verdana", "Trebuchet MS", sans-serif;
+    text-shadow: 0 0 1px var(--theme-color), 0 0 2px var(--theme-color);
+    box-shadow: 0 0 1px var(--theme-color), 0 0 2px var(--theme-color), 0 0 10px var(--theme-color);
+
 }
 
 .button-top:hover {
     background: var(--theme-color);
     color: var(--bg-color);
+}
+
+.button-top.reverse {
+    background:  var(--theme-color);
+    color: var(--bg-color);
+ }
+
+.button-top.reverse:hover {
+    background: var(--bg-color);
+    color: var(--theme-color);
+}
+
+#button-main {
+    height: 48px;
+    padding-top: 10px;
+    margin-left: 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 35px;
+    font-family: "SkyLuke", "Times New Roman", serif;
 }
 
 

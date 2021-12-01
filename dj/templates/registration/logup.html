@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 {% block head %}
-    <link rel="stylesheet" href="../../static/css/registration.css">
-    <title>Log Up</title>
+<link rel="stylesheet" href="/static/css/registration.css">
+<title>Log Up</title>
 {% endblock head %}
 {% block body %}
-    <h1 style="text-align: center;">Log Up</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <div>
-            {% for field in form %}
-                <div class="field">
-                    {{ field.label_tag }}
-                    <div>{{ field }}</div>
-                </div>
-            {% endfor %}
+<h1 style="text-align: center;">Log Up</h1>
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        {% for field in form %}
+        <div class="field">
+            {{ field.label_tag }}
+            <div>{{ field }}</div>
         </div>
-        <input type="submit" value="Log up" class="button-submit">
-    </form>
+        {% endfor %}
+    </div>
+    <label>By clicking the button I accept the <br/></label>
+    <a href="/static/pdf/User%20Agreement.pdf" target="_blank">User Agreement<br/></a>
+
+    <input type="submit" value="Log up" class="button-top reverse"
+           style="border-radius: 5px; margin: 10px 0 0 0">
+</form>
 {% endblock body %}
