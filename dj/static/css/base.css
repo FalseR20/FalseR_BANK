@@ -26,6 +26,16 @@ h1 {
     align-self: center;
 }
 
+#button-main {
+    padding-top: 8px;
+    padding-bottom: 2px;
+    margin-left: 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 35px;
+    font-family: "SkyLuke", "Times New Roman", serif;
+}
+
 .button-top {
     padding: 5px 20px;
     margin: 8px 8px 8px 10px;
@@ -37,7 +47,7 @@ h1 {
     font-size: 20px;
     font-family: "Verdana", "Trebuchet MS", sans-serif;
     text-shadow: 0 0 1px var(--theme-color), 0 0 2px var(--theme-color);
-    box-shadow: 0 0 1px var(--theme-color), 0 0 2px var(--theme-color), 0 0 10px var(--theme-color);
+    box-shadow: 0 0 1px var(--theme-color), 0 0 2px var(--theme-color);
 
 }
 
@@ -54,16 +64,6 @@ h1 {
 .button-top.reverse:hover {
     background: var(--bg-color);
     color: var(--theme-color);
-}
-
-#button-main {
-    height: 48px;
-    padding-top: 10px;
-    margin-left: 15px;
-    color: var(--text-color);
-    text-decoration: none;
-    font-size: 35px;
-    font-family: "SkyLuke", "Times New Roman", serif;
 }
 
 

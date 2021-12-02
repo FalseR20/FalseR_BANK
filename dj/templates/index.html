@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block head %}
+    {% load static %}
     <title>Main Page</title>
     <style>
-    li {
-        font-size: 25px;
-        font-family: "Verdana", "Trebuchet MS", sans-serif;
-    }
+        li {
+            font-size: 25px;
+            font-family: "Verdana", "Trebuchet MS", sans-serif;
+        }
     </style>
 {% endblock head %}
 {% block body %}
@@ -14,7 +15,7 @@
         <li>Карты: {{ cards.count }}</li>
         <ul style="list-style-type:disc">
             {% for card in cards %}
-                <li> {{ card.number }}: {{ card.account.balance|floatformat:2}} {{ card.account.currency.code }}</li>
+                <li> {{ card.number }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
             {% endfor %}
         </ul>
     </ol>

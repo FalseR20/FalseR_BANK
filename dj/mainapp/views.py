@@ -59,4 +59,22 @@ def log_out(request):
 
 # Привязка карт
 def cards(request):
-    return render(request, "cards.html")
+    class TempForm(forms.Form):
+        systems = forms.ChoiceField(
+            label="System",
+            choices=((4, "VISA"), (5, "Mastercard"))
+        )
+        currencies = forms.ChoiceField(
+            label="Currency",
+            choices=((currency.id, currency.code) for currency in Currencies.objects.all())
+        )
+        accounts = forms.ChoiceField(
+            label="Account",
+            choices=((0, "new account"),) +
+                    tuple(
+                        (account.id, account.id) for account in
+                        Accounts.objects.filter(clients=Clients.objects.get(user=request.user.id))
+                    )
+        )
+
+    return render(request, "cards.html", {'form': TempForm()})

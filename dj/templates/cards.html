@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 {% block head %}
     {% load static %}
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
     <title>Cards</title>
 {% endblock head %}
 {% block body %}
     <h1 style="text-align: center;">Cards</h1>
-
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            {% for field in form %}
+                <div class="field">
+                    <label>{{ field.label_tag }}</label>
+                    <div>{{ field }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <input type="submit" value="Log In" class="button-top reverse"
+               style="border-radius: 5px; margin: 10px 0 0 0">
+    </form>
 {% endblock body %}
