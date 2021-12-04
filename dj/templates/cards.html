@@ -2,6 +2,7 @@
 {% block head %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
     <title>Cards</title>
 {% endblock head %}
 {% block body %}
@@ -16,7 +17,7 @@
                 </div>
             {% endfor %}
         </div>
-        <input type="submit" value="Log In" class="button-top reverse"
+        <input type="submit" value="Create card" class="button-top reverse"
                style="border-radius: 5px; margin: 10px 0 0 0">
     </form>
 {% endblock body %}

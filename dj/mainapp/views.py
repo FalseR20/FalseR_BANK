@@ -1,4 +1,7 @@
-from django.shortcuts import render
+import datetime
+import random
+
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import *
@@ -13,7 +16,7 @@ def index(request):
             return render(
                 request, "index.html",
                 {
-                    "user": request.user.get_username,
+                    "user": request.user.get_username(),
                     "cards": Cards.objects.filter(client=client)
                 }
             )
@@ -27,10 +30,7 @@ def index(request):
 def log_up(request):
     if request.method == "POST":
         user_form = UserRegistration(request.POST)
-        if not user_form.is_valid():
-            return render(request, "index.html",
-                          {"user": "самый умный? Давай нормально регайся и оформляй кредитик"})
-        else:
+        if user_form.is_valid():
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
             if password == confirm_password:
@@ -59,22 +59,37 @@ def log_out(request):
 
 # Привязка карт
 def cards(request):
-    class TempForm(forms.Form):
-        systems = forms.ChoiceField(
-            label="System",
-            choices=((4, "VISA"), (5, "Mastercard"))
-        )
-        currencies = forms.ChoiceField(
-            label="Currency",
-            choices=((currency.id, currency.code) for currency in Currencies.objects.all())
-        )
-        accounts = forms.ChoiceField(
-            label="Account",
-            choices=((0, "new account"),) +
-                    tuple(
-                        (account.id, account.id) for account in
-                        Accounts.objects.filter(clients=Clients.objects.get(user=request.user.id))
-                    )
-        )
+    client = Clients.objects.get(user=request.user.id)
+    accounts = (tuple((account.id, f"{account.id} ({account.currency.code})") for account in
+                     Accounts.objects.filter(clients=client)) +
+               tuple((-currency.id, f"New account in {currency.code}") for currency in Currencies.objects.all()))
+    card_form = CardForm(account_choices=accounts)
 
-    return render(request, "cards.html", {'form': TempForm()})
+    if request.method == "POST":
+        system_post = int(request.POST.get("system"))
+        time_post = int(request.POST.get("time"))
+        account_post = int(request.POST.get("account"))
+
+        # Validation
+        in_system = [el[0] for el in card_form.fields['system'].choices]
+        in_time = range(1, 6)
+        in_account = [el[0] for el in accounts]
+        if system_post in in_system and time_post in in_time and account_post in in_account:
+            if account_post < 0:
+                account = client.accounts_set.create(currency_id=-account_post, balance=0)
+                account.save()
+            else:
+                account = Accounts.objects.get(id=account_post)
+
+            new_card = Cards.objects.create(number=str(system_post) + "228" + str(Cards.objects.last().number + 1)[4:],
+                                            client=client,
+                                            account=account,
+                                            cardholder_name=request.user.get_full_name().upper(),
+                                            expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
+                                                                          month=datetime.datetime.now().month,
+                                                                          day=31),
+                                            security_code=random.randint(1, 999))
+            new_card.save()
+            return redirect('/')
+
+    return render(request, "cards.html", {'form': card_form})
