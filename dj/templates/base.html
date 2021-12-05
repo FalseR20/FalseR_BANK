@@ -15,15 +15,15 @@
         <a id="button-main" href="/">FalseR • 𝔹𝔸ℕ𝕂</a>
     </div>
     <div>
-        <a class="button-top" href="/log_in">Log in</a>
-        <a class="button-top" href="/log_up">Log up</a>
-        <a class="button-top" href="/log_out">Log out</a>
+        <a class="button-top" href="/sign_in">Sign in</a>
+        <a class="button-top" href="/sign_up">Sign up</a>
+        <a class="button-top" href="/sign_out">Sign out</a>
     </div>
 </div>
 
 <div id="div-main">
     {% block body %}
-        <h1>Default text</h1>
+        <h1>Hello, staff user {{ staff_user }}</h1>
     {% endblock body %}
 </div>
 </body>

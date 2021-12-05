@@ -22,13 +22,13 @@ def index(request):
                 }
             )
         else:
-            return render(request, "base.html")
+            return render(request, "base.html", {"staff_user": request.user.get_username()})
     else:
         return render(request, "guest.html")
 
 
 # Регистрация
-def log_up(request):
+def sign_up(request):
     if request.method == "POST":
         user_form = UserRegistration(request.POST)
         if user_form.is_valid():
@@ -49,11 +49,11 @@ def log_up(request):
                 return HttpResponseRedirect("/")
 
     user_form = UserRegistration()
-    return render(request, "registration/logup.html", {"title": "Sign Up", "form": user_form})
+    return render(request, "registration/signup.html", {"form": user_form})
 
 
 # Вход
-def log_out(request):
+def sign_out(request):
     logout(request)
     return HttpResponseRedirect("/")
 
