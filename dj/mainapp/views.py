@@ -83,7 +83,7 @@ def cards(request):
             else:
                 account = Accounts.objects.get(id=account_post)
 
-            new_card = Cards.objects.create(number=str(system_post) + "228" + str(Cards.objects.last().number + 1)[4:],
+            new_card = Cards.objects.create(number=str(system_post) + "22820" + str(Cards.objects.last().number + 1)[6:],
                                             client=client,
                                             account=account,
                                             cardholder_name=cardholder_name,

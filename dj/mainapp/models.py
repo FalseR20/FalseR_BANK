@@ -25,9 +25,11 @@ class Courses(models.Model):
 
 # 4. Счета клиентов в разных валютах
 class Accounts(models.Model):
+    iban = models.CharField(max_length=24, primary_key=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=21, decimal_places=6)
     clients = models.ManyToManyField(Clients)
+    iz_freeze = models.BooleanField()
 
 
 # 5. Карты клиентов
@@ -38,20 +40,16 @@ class Cards(models.Model):
     cardholder_name = models.CharField(max_length=30)
     expiration_date = models.DateField()
     security_code = models.IntegerField()
+    iz_freeze = models.BooleanField()
 
 
-# 6. Шаблоны операций (#7)
-class Templates(models.Model):
-    description = models.CharField(max_length=64)
-
-
-# 7. Операции
+# 6. Операции
 class Operations(models.Model):
-    template = models.ForeignKey(Templates, on_delete=models.CASCADE)
     time = models.TimeField()
-    sender = models.ForeignKey(User, related_name="sender", on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name="receiver", on_delete=models.CASCADE)
+    sender_iban = models.ForeignKey(User, related_name="sender_iban", on_delete=models.CASCADE)
+    receiver_iban = models.ForeignKey(User, related_name="receiver_iban", on_delete=models.CASCADE)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6)
-    is_active = models.BooleanField()
+    description = models.CharField(max_length=50)
+    is_successful = models.BooleanField()
