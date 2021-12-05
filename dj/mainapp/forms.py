@@ -15,6 +15,8 @@ class CardForm(forms.Form):
                              choices=((1, "1 year"), (2, "2 years"), (3, "3 years"), (4, "4 years"), (5, "5 years")),
                              initial=4)
 
-    def __init__(self, account_choices, *args, **kwargs):
+    def __init__(self, account_choices, cardholder_name, *args, **kwargs):
         super(CardForm, self).__init__(*args, **kwargs)
+        self.fields['cardholder_name'] = forms.CharField(label="Cardholder name", initial=cardholder_name,
+                                                         max_length=30)
         self.fields['account'] = forms.ChoiceField(label="Account", choices=account_choices)

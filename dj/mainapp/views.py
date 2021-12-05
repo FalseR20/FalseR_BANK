@@ -17,7 +17,8 @@ def index(request):
                 request, "index.html",
                 {
                     "user": request.user.get_username(),
-                    "cards": Cards.objects.filter(client=client)
+                    "cards": Cards.objects.filter(client=client),
+                    "accounts": Accounts.objects.filter(clients=client),
                 }
             )
         else:
@@ -63,11 +64,12 @@ def cards(request):
     accounts = (tuple((account.id, f"{account.id} ({account.currency.code})") for account in
                       Accounts.objects.filter(clients=client)) +
                 tuple((-currency.id, f"New account in {currency.code}") for currency in Currencies.objects.all()))
-    card_form = CardForm(account_choices=accounts)
+    card_form = CardForm(account_choices=accounts, cardholder_name=client.fullname.upper())
 
     if request.method == "POST":
         system_post = int(request.POST.get("system"))
         time_post = int(request.POST.get("time"))
+        cardholder_name = request.POST.get("cardholder_name").upper()
         account_post = int(request.POST.get("account"))
 
         # Validation
@@ -84,7 +86,7 @@ def cards(request):
             new_card = Cards.objects.create(number=str(system_post) + "228" + str(Cards.objects.last().number + 1)[4:],
                                             client=client,
                                             account=account,
-                                            cardholder_name=request.user.get_full_name().upper(),
+                                            cardholder_name=cardholder_name,
                                             expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
                                                                           month=datetime.datetime.now().month,
                                                                           day=31),

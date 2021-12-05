@@ -7,15 +7,24 @@
             font-size: 25px;
             font-family: "Verdana", "Trebuchet MS", sans-serif;
         }
+        ul {
+            list-style-type:disc
+        }
     </style>
 {% endblock head %}
 {% block body %}
     <h1>Привет, {{ user }}, ваши владения:</h1>
     <ol>
         <li>Карты: {{ cards.count }}</li>
-        <ul style="list-style-type:disc">
+        <ul>
             {% for card in cards %}
-                <li> {{ card.number }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
+                <li> {{ card.number }} -> {{ card.account.id }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
+            {% endfor %}
+        </ul>
+        <li>Счета: {{ accounts.count }}</li>
+        <ul>
+            {% for account in accounts %}
+                <li> {{ account.id }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
             {% endfor %}
         </ul>
     </ol>
