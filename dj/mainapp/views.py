@@ -61,8 +61,8 @@ def log_out(request):
 def cards(request):
     client = Clients.objects.get(user=request.user.id)
     accounts = (tuple((account.id, f"{account.id} ({account.currency.code})") for account in
-                     Accounts.objects.filter(clients=client)) +
-               tuple((-currency.id, f"New account in {currency.code}") for currency in Currencies.objects.all()))
+                      Accounts.objects.filter(clients=client)) +
+                tuple((-currency.id, f"New account in {currency.code}") for currency in Currencies.objects.all()))
     card_form = CardForm(account_choices=accounts)
 
     if request.method == "POST":

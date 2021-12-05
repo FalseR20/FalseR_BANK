@@ -1,35 +1,43 @@
-def delete_nulls(iban: str) -> str:
-    while iban[0] == "0":
-        iban = iban[1:]
-    return iban
+# https://www.nbrb.by/legislation/documents/p_440.pdf - IBAN Беларуси
+# https://www.ibancalculator.com/iban_validieren.html - проверка
 
-def iban_control_int(iban: str) -> int:
-    # https://expert.chistov.pro/public/1105804/ - описание формулы
-    # https://www.ibancalculator.com/iban_validieren.html - проверка
-    iban = iban[4:] + iban[:2] + "00"
-    new_iban = ""
-    for char in iban:
-        num = ord(char) - 55
-        if num >= 10:
-            new_iban += str(num)
-        else:
-            new_iban += char
+# FALSER BANK IBAN:
+# BY-- FLSR ____ ____ ____
+#  currency |||
+#  acc. type   |
 
-    print("IBAN:", new_iban)
-
-    num, new_iban = int(new_iban[:9]), new_iban[9:]
-    n = num % 97
-    print(n, num, new_iban)
-    while new_iban:
-        if len(new_iban) <= 7:
-            num = int(str(n) + delete_nulls(new_iban))
-            new_iban = ""
-        else:
-            num = int(str(n) + delete_nulls(new_iban[:7]))
-            new_iban = new_iban[7:]
-        n = num % 97
-        print(n, num, new_iban)
-    return n
+def make_iban(curr: str, acc_type: str, number: str) -> str:
+    acc = curr + acc_type + number
+    acc_numbers = ""
+    for char in acc:
+        num = ord(char)
+        acc_numbers += str(num - 55) if num >= 65 else char
+    control = 98 - (int("15212827" + acc_numbers + "113400") % 97)  # *FLSR* + acc_numbers + *BY*
+    return "BY" + str(control) + "FLSR" + acc
 
 
-print(iban_control_int("BY20OLMP31350000001000000933"))
+def control_iban(iban: str) -> int:
+    if iban[:2] != "BY":
+        return True
+    acc = iban[4:]
+    acc_numbers = ""
+    for char in acc:
+        num = ord(char)
+        acc_numbers += str(num - 55) if num >= 65 else char
+    control = 98 - (int(acc_numbers + "113400") % 97)
+    return control == int(iban[2:4])
+
+
+def str_iban(iban: str) -> str:
+    out = iban[:4] + ' ' + iban[4:8] + ' ' + iban[8:12] + ' ' + iban[12:]
+    return out
+
+
+def main():
+    iban = make_iban("BYN", "D", "000000000000")
+    print(str_iban(iban))
+    print(control_iban(iban))
+
+
+if __name__ == '__main__':
+    main()
