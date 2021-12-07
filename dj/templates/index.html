@@ -14,7 +14,7 @@
     </style>
 {% endblock head %}
 {% block body %}
-    <h1>Привет, {{ user }}, ваши владения:</h1>
+    <h1>Привет, {{ client.fullname }}, ваши владения:</h1>
     <ol>
         <li>Карты: {{ cards.count }}</li>
         <ul>

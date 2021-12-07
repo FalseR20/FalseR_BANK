@@ -23,7 +23,7 @@
 
 <div id="div-main">
     {% block body %}
-        <h1>Hello, staff user {{ staff_user }}</h1>
+        <h1>Hello, staff user {{ staff_user.get_username }}</h1>
     {% endblock body %}
 </div>
 </body>

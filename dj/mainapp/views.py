@@ -6,26 +6,24 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import *
 from .forms import *
-from .functions import *
+from .iban_func import make_iban
 
 
 # Главная страница
 def index(request):
-    if request.user.is_authenticated:
-        if not request.user.is_staff:
-            client = Clients.objects.get(user=request.user.id)
-            return render(
-                request, "index.html",
-                {
-                    "user": client.fullname,
-                    "cards": Cards.objects.filter(client=client),
-                    "accounts": Accounts.objects.filter(clients=client),
-                }
-            )
-        else:
-            return render(request, "base.html", {"staff_user": request.user.get_username()})
-    else:
+    if not request.user.is_authenticated:
         return render(request, "guest.html")
+    if not request.user.is_staff:
+        client = Clients.objects.get(user=request.user.id)
+        return render(
+            request, "index.html",
+            {
+                "client": client,
+                "cards": Cards.objects.filter(client=client),
+                "accounts": Accounts.objects.filter(clients=client),
+            }
+        )
+    return render(request, "base.html", {"staff_user": request.user})
 
 
 # Регистрация
@@ -61,6 +59,8 @@ def sign_out(request):
 
 # Привязка карт
 def cards(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
     client = Clients.objects.get(user=request.user.id)
     accounts = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
                       Accounts.objects.filter(clients=client)) +
