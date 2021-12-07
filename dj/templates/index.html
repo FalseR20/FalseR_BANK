@@ -18,13 +18,13 @@
         <li>Карты: {{ cards.count }}</li>
         <ul>
             {% for card in cards %}
-                <li> {{ card.number }} -> {{ card.account.id }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
+                <li> {{ card.number }} -> {{ card.account.iban }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
             {% endfor %}
         </ul>
         <li>Счета: {{ accounts.count }}</li>
         <ul>
             {% for account in accounts %}
-                <li> {{ account.id }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
+                <li> {{ account.iban }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
             {% endfor %}
         </ul>
     </ol>

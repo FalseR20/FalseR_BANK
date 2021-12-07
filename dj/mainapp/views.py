@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import *
 from .forms import *
+from .functions import *
 
 
 # Главная страница
@@ -61,37 +62,49 @@ def sign_out(request):
 # Привязка карт
 def cards(request):
     client = Clients.objects.get(user=request.user.id)
-    accounts = (tuple((account.id, f"{account.id} ({account.currency.code})") for account in
+    accounts = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
                       Accounts.objects.filter(clients=client)) +
-                tuple((-currency.id, f"New account in {currency.code}") for currency in Currencies.objects.all()))
+                tuple((str(-currency.id), f"New account in {currency.code}") for currency in Currencies.objects.all()))
     card_form = CardForm(account_choices=accounts, cardholder_name=client.fullname.upper())
 
     if request.method == "POST":
         system_post = int(request.POST.get("system"))
         time_post = int(request.POST.get("time"))
         cardholder_name = request.POST.get("cardholder_name").upper()
-        account_post = int(request.POST.get("account"))
+        account_post = request.POST.get("account")
 
         # Validation
         in_system = [el[0] for el in card_form.fields['system'].choices]
         in_time = range(1, 6)
         in_account = [el[0] for el in accounts]
         if system_post in in_system and time_post in in_time and account_post in in_account:
-            if account_post < 0:
-                account = client.accounts_set.create(currency_id=-account_post, balance=0)
-                account.save()
+            # Addition stage
+            if account_post[0] == '-':
+                account_post = -int(account_post)
+                last_acc = Accounts.objects.last()
+                print(last_acc)
+                account = client.accounts_set.create(
+                    iban=make_iban(Currencies.objects.get(id=account_post).code,
+                                   "1",
+                                   ("%016d" % (int(last_acc.iban[12:]) + 1)) if last_acc else "0000000000000000"),
+                    currency_id=account_post,
+                    balance=0,
+                    iz_freeze=False).save()
             else:
-                account = Accounts.objects.get(id=account_post)
-
-            new_card = Cards.objects.create(number=str(system_post) + "22820" + str(Cards.objects.last().number + 1)[6:],
-                                            client=client,
-                                            account=account,
-                                            cardholder_name=cardholder_name,
-                                            expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
-                                                                          month=datetime.datetime.now().month,
-                                                                          day=31),
-                                            security_code=random.randint(1, 999))
-            new_card.save()
+                account = Accounts.objects.get(iban=account_post)
+            last_card = Cards.objects.last()
+            new_card = Cards.objects.create(
+                number=int(str(system_post) +
+                           "23814" +
+                           (("%010d" % (last_card.number % 1e10 + 1)) if last_card else "0000000000")),
+                client=client,
+                account=account,
+                cardholder_name=cardholder_name,
+                expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
+                                              month=datetime.datetime.now().month,
+                                              day=31),
+                security_code=random.randint(1, 999),
+                iz_freeze=False).save()
             return redirect('/')
 
     return render(request, "cards.html", {'form': card_form})

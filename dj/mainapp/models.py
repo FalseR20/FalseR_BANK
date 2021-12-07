@@ -25,11 +25,11 @@ class Courses(models.Model):
 
 # 4. Счета клиентов в разных валютах
 class Accounts(models.Model):
-    iban = models.CharField(max_length=24, primary_key=True)
+    iban = models.CharField(max_length=28, primary_key=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=21, decimal_places=6)
-    clients = models.ManyToManyField(Clients)
     iz_freeze = models.BooleanField()
+    clients = models.ManyToManyField(Clients)
 
 
 # 5. Карты клиентов
@@ -44,8 +44,8 @@ class Cards(models.Model):
 
 
 # 6. Операции
-class Operations(models.Model):
-    time = models.TimeField()
+class Transactions(models.Model):
+    timestamp = models.TimeField()
     sender_iban = models.ForeignKey(User, related_name="sender_iban", on_delete=models.CASCADE)
     receiver_iban = models.ForeignKey(User, related_name="receiver_iban", on_delete=models.CASCADE)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)

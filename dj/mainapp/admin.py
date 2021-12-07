@@ -6,6 +6,4 @@ admin.site.register(Currencies)
 admin.site.register(Courses)
 admin.site.register(Accounts)
 admin.site.register(Cards)
-admin.site.register(Templates)
-admin.site.register(Operations)
-
+admin.site.register(Transactions)
