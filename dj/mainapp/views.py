@@ -17,7 +17,7 @@ def index(request):
             return render(
                 request, "index.html",
                 {
-                    "user": request.user.get_username(),
+                    "user": client.fullname,
                     "cards": Cards.objects.filter(client=client),
                     "accounts": Accounts.objects.filter(clients=client),
                 }
@@ -80,23 +80,27 @@ def cards(request):
         if system_post in in_system and time_post in in_time and account_post in in_account:
             # Addition stage
             if account_post[0] == '-':
-                account_post = -int(account_post)
+                currency_id = -int(account_post)
                 last_acc = Accounts.objects.last()
-                print(last_acc)
+                while True:
+                    randiban = make_iban("1" + Currencies.objects.get(id=currency_id).code,
+                                         "%016d" % random.randint(0, 9999_9999_9999_9999))
+                    if not Accounts.objects.filter(iban=randiban):
+                        break
                 account = client.accounts_set.create(
-                    iban=make_iban(Currencies.objects.get(id=account_post).code,
-                                   "1",
-                                   ("%016d" % (int(last_acc.iban[12:]) + 1)) if last_acc else "0000000000000000"),
-                    currency_id=account_post,
+                    iban=randiban,
+                    currency_id=currency_id,
                     balance=0,
-                    iz_freeze=False).save()
+                    iz_freeze=False)
+                account.save()
             else:
                 account = Accounts.objects.get(iban=account_post)
-            last_card = Cards.objects.last()
-            new_card = Cards.objects.create(
-                number=int(str(system_post) +
-                           "23814" +
-                           (("%010d" % (last_card.number % 1e10 + 1)) if last_card else "0000000000")),
+            while True:
+                randnumber = int(str(system_post) + "23814" + "%010d" % random.randint(0, 99_9999_9999))
+                if not Cards.objects.filter(number=randnumber):
+                    break
+            card = Cards.objects.create(
+                number=randnumber,
                 client=client,
                 account=account,
                 cardholder_name=cardholder_name,
@@ -104,7 +108,8 @@ def cards(request):
                                               month=datetime.datetime.now().month,
                                               day=31),
                 security_code=random.randint(1, 999),
-                iz_freeze=False).save()
+                iz_freeze=False)
+            card.save()
             return redirect('/')
 
     return render(request, "cards.html", {'form': card_form})

@@ -39,11 +39,11 @@ from mainapp_accounts_clients;
 delete
 from mainapp_accounts;
 
-delete
-from mainapp_courses;
-
-delete
-from mainapp_currencies;
+-- delete
+-- from mainapp_courses;
+--
+-- delete
+-- from mainapp_currencies;
 
 delete
 from mainapp_clients;

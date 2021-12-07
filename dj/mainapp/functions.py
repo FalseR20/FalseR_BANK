@@ -1,13 +1,13 @@
 # https://www.nbrb.by/legislation/documents/p_440.pdf - IBAN Беларуси
-# https://www.ibancalculator.com/iban_validieren.html - проверка
+# https://bank.codes/iban/validate/ - проверка
 
 # FALSER BANK IBAN:
 # BY-- FLSR ____ ____ ____ ____
 #           |||  currecny.code
 #              | account type
 
-def make_iban(curr: str, acc_type: str, number: str) -> str:
-    acc = curr + acc_type + number
+def make_iban(type_and_curr: str, number: str) -> str:
+    acc = type_and_curr + number
     acc_numbers = ""
     for char in acc:
         num = ord(char)
@@ -34,7 +34,7 @@ def str_iban(iban: str) -> str:
 
 
 def main():
-    iban = make_iban("USD", "1", "000000000000")
+    iban = make_iban("1USD", "0000000000000000")
     print(iban)
     print(str_iban(iban))
     print(control_iban(iban))

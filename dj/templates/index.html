@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
     {% load static %}
+    {% load pretty_output %}
     <title>Main Page</title>
     <style>
         li {
@@ -18,13 +19,13 @@
         <li>Карты: {{ cards.count }}</li>
         <ul>
             {% for card in cards %}
-                <li> {{ card.number }} -> {{ card.account.iban }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
+                <li> {{ card.number|pretty_output }} -> {{ card.account.iban|pretty_output }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
             {% endfor %}
         </ul>
         <li>Счета: {{ accounts.count }}</li>
         <ul>
             {% for account in accounts %}
-                <li> {{ account.iban }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
+                <li> {{ account.iban|pretty_output }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
             {% endfor %}
         </ul>
     </ol>
