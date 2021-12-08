@@ -4,30 +4,27 @@
     {% load pretty_output %}
     <title>Main Page</title>
     <style>
-        li {
+         .card-window {
             font-size: 25px;
             font-family: "Verdana", "Trebuchet MS", sans-serif;
-        }
-        ul {
-            list-style-type:disc
         }
     </style>
 {% endblock head %}
 {% block body %}
     <h1>Привет, {{ client.fullname }}, ваши владения:</h1>
-    <ol>
-        <li>Карты: {{ cards.count }}</li>
-        <ul>
-            {% for card in cards %}
-                <li> {{ card.number|pretty_output }} -> {{ card.account.iban|pretty_output }}: {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</li>
-            {% endfor %}
-        </ul>
-        <li>Счета: {{ accounts.count }}</li>
-        <ul>
-            {% for account in accounts %}
-                <li> {{ account.iban|pretty_output }}: {{ account.balance|floatformat:2 }} {{ account.currency.code }}</li>
-            {% endfor %}
-        </ul>
+    {% if cards.count > 0 %}
+        <div class="card-window">
+            {{ cards.0.number|pretty_output }}
+            <br/>
+            {{ cards.0.cardholder_name }}
+            {{ cards.0.expiration_date|date:"m/y" }}
+            <br/>
+            {{ cards.0.account.balance|floatformat:2 }}
+            {{ cards.0.account.currency.code }}
+        </div>
+        <br/>
+    {% endif %}
+
     </ol>
     <a class="button-top" href="/cards">Add card</a>
 {% endblock body %}

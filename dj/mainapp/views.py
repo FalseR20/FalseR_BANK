@@ -81,7 +81,6 @@ def cards(request):
             # Addition stage
             if account_post[0] == '-':
                 currency_id = -int(account_post)
-                last_acc = Accounts.objects.last()
                 while True:
                     randiban = make_iban("1" + Currencies.objects.get(id=currency_id).code,
                                          "%016d" % random.randint(0, 9999_9999_9999_9999))
@@ -109,6 +108,7 @@ def cards(request):
                                               day=31),
                 security_code=random.randint(1, 999),
                 iz_freeze=False)
+            # card.expiration_date.year
             card.save()
             return redirect('/')
 
