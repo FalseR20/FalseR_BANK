@@ -4,27 +4,48 @@
     {% load pretty_output %}
     <title>Main Page</title>
     <style>
-         .card-window {
-            font-size: 25px;
-            font-family: "Verdana", "Trebuchet MS", sans-serif;
+        .card-panels {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
         }
+        .card-panel {
+            flex-shrink: 0;
+            flex-grow: 0;
+            width: 250px;
+            height: 150px;
+            margin: 10px 15px 5px 0;
+            font-size: 20px;
+            font-family: "Verdana", "Trebuchet MS", sans-serif;
+            border: 2px solid var(--text-color);
+            border-radius: 2px;
+            padding: 0 20px 0 20px;
+        }
+        .card-panel.create {
+            font-size: 110px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
     </style>
 {% endblock head %}
 {% block body %}
-    <h1>Привет, {{ client.fullname }}, ваши владения:</h1>
     {% if cards.count > 0 %}
-        <div class="card-window">
-            {{ cards.0.number|pretty_output }}
-            <br/>
-            {{ cards.0.cardholder_name }}
-            {{ cards.0.expiration_date|date:"m/y" }}
-            <br/>
-            {{ cards.0.account.balance|floatformat:2 }}
-            {{ cards.0.account.currency.code }}
+        <div class="card-panels">
+            {% for card in cards %}
+                <div class="card-panel">
+                    <p>{{ card.number|pretty_output }}</p>
+                    <div style="text-align: left; float: left">{{ card.cardholder_name }}</div>
+                    <div style="text-align: right; float: right">{{ card.expiration_date|date:"m/y" }}</div>
+                    <br/>
+                    <p style="text-align: center; float: bottom">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</p>
+                </div>
+            {% endfor %}
+            <a class="card-panel create" href="/cards">+</a>
         </div>
-        <br/>
     {% endif %}
-
-    </ol>
-    <a class="button-top" href="/cards">Add card</a>
+    <br/>
+    <br/>
+    <br/>
 {% endblock body %}

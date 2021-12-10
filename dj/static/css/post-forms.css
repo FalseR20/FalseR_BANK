@@ -21,4 +21,5 @@ form {
 .field label {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
     font-size: 14px;
+    cursor: text;
 }

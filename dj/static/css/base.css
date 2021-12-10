@@ -64,6 +64,7 @@ h1 {
 .button-top.reverse:hover {
     background: var(--bg-color);
     color: var(--theme-color);
+    cursor: pointer;
 }
 
 
