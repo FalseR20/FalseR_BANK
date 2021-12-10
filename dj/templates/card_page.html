@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    {% load pretty_output %}
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <title>Card operations</title>
+{% endblock head %}
+{% block body %}
+    <div class="card-block">
+        <p>{{ card.number|pretty_output }}</p>
+        <div class="cardholder_name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
+        <div class="expiration_date">{{ card.expiration_date|date:"m/y" }}</div>
+        <br/>
+        <p class="balance">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</p>
+    </div>
+{% endblock body %}

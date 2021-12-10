@@ -1,0 +1,43 @@
+.card-block {
+    width: 250px;
+    height: 150px;
+    margin: 10px 15px 5px 0;
+    font-size: 20px;
+    font-family: "Verdana", "Trebuchet MS", sans-serif;
+    border: 2px solid var(--text-color);
+    border-radius: 2px;
+    padding: 0 20px 0 20px;
+}
+
+.card-panel {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.card-block.but {
+    flex-shrink: 0;
+    flex-grow: 0;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.card-block.but.new {
+    font-size: 110px;
+    text-align: center;
+}
+
+.cardholder_name {
+    text-align: left;
+    float: left;
+}
+
+.expiration_date {
+    text-align: right;
+    float: right;
+}
+
+.balance {
+    text-align: center;
+    float: bottom;
+}

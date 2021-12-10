@@ -58,7 +58,7 @@ def sign_out(request):
 
 
 # Привязка карт
-def cards(request):
+def new_card(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     client = Clients.objects.get(user=request.user.id)
@@ -112,4 +112,19 @@ def cards(request):
             card.save()
             return redirect('/')
 
-    return render(request, "cards.html", {'form': card_form})
+    return render(request, "new_card.html", {'form': card_form})
+
+
+# Операция с выбранной картой
+def card_page(request, number):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    client = Clients.objects.get(user=request.user.id)
+    if client in Clients.objects.filter(cards__number=number):
+        if request.method == 'Post':
+            pass
+            return redirect('/')
+        card = Cards.objects.get(number=number)
+        return render(request, "card_page.html", {'card': card})
+
+    return redirect('/')
