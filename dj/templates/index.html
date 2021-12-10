@@ -36,7 +36,7 @@
             {% for card in cards %}
                 <div class="card-panel">
                     <p>{{ card.number|pretty_output }}</p>
-                    <div style="text-align: left; float: left">{{ card.cardholder_name }}</div>
+                    <div style="text-align: left; float: left">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
                     <div style="text-align: right; float: right">{{ card.expiration_date|date:"m/y" }}</div>
                     <br/>
                     <p style="text-align: center; float: bottom">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</p>
