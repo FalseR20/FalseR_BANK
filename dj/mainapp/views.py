@@ -117,14 +117,23 @@ def new_card(request):
 
 # Операция с выбранной картой
 def card_page(request, number):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-    client = Clients.objects.get(user=request.user.id)
-    if client in Clients.objects.filter(cards__number=number):
-        if request.method == 'Post':
-            pass
-            return redirect('/')
-        card = Cards.objects.get(number=number)
-        return render(request, "card_page.html", {'card': card})
+    if request.user.is_authenticated:
+        client = Clients.objects.get(user=request.user.id)
+        if client in Clients.objects.filter(cards__number=number):
+            card = Cards.objects.get(number=number)
+            return render(request, "card_page.html", {'card': card})
 
     return redirect('/')
+
+
+def card_operations(request, number, operation_type):
+    if request.user.is_authenticated and operation_type == "put" or operation_type == "take":
+        is_put = operation_type == "put"
+        client = Clients.objects.get(user=request.user.id)
+        if client in Clients.objects.filter(cards__number=number):
+            card = Cards.objects.get(number=number)
+            templates = Templates.objects.all()
+            return render(request, "card_operations.html", {'card': card, 'templates': templates})
+
+    return redirect('/')
+

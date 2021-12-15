@@ -43,13 +43,21 @@ class Cards(models.Model):
     iz_freeze = models.BooleanField()
 
 
-# 6. Операции
+# 6. Шаблоны операций
+class Templates(models.Model):
+    icon = models.CharField(max_length=30)
+    description = models.CharField(max_length=50)
+    is_send = models.BooleanField()
+    other_iban = models.CharField(max_length=34, null=True)
+
+
+# 7. Операции
 class Transactions(models.Model):
-    timestamp = models.TimeField()
-    sender_iban = models.ForeignKey(User, related_name="sender_iban", on_delete=models.CASCADE)
-    receiver_iban = models.ForeignKey(User, related_name="receiver_iban", on_delete=models.CASCADE)
+    template = models.ForeignKey(Templates, on_delete=models.CASCADE)
+    sender_iban = models.ForeignKey(Accounts, related_name="sender_iban", on_delete=models.CASCADE)
+    receiver_iban = models.ForeignKey(Accounts, related_name="receiver_iban", on_delete=models.CASCADE)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6)
-    description = models.CharField(max_length=50)
+    timestamp = models.TimeField()
     is_successful = models.BooleanField()

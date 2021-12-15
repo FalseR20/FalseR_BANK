@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    <title>Main Page</title>
+    <style>
+        .icon {
+        {#width: 50px;#} height: 50px;
+            padding: 5px;
+            margin: 5px;
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+        }
+    </style>
+{% endblock head %}
+{% block body %}
+    {% for template in templates %}
+        <img class="icon" src="{% static 'operation_icons/' %}{{ template.icon }}" alt="{{ template.description }}"/>
+    {% endfor %}
+{% endblock body %}
