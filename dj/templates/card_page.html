@@ -5,50 +5,47 @@
     <link rel="stylesheet" href="{% static 'css/cards.css' %}">
     <title>Card operations</title>
     <style>
-        #card-grid {
-            width: 300px;
-            display: grid;
-            justify-items: center;
-            grid-template-areas:
-    'card card'
-    'plus minus';
+        #container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: center;
         }
+
+        #container-left {
+            justify-self: start;
+        }
+
+        #container div {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
         .card-block {
-            grid-area: card;
             margin-right: 0;
         }
 
-        .under-card-buttons {
-            text-decoration: none;
-            width: 100px;
-            height: 50px;
-            border: 2px solid var(--text-color);
-            font-size: 35px;
-            text-align: center;
-        }
-
-        .under-card-buttons.plus {
-            grid-area: plus;
-            color: lawngreen;
-        }
-
-        .under-card-buttons.minus {
-            grid-area: minus;
-            color: orangered;
-        }
 
     </style>
 {% endblock head %}
 {% block body %}
-    <div id="card-grid">
-        <div class="card-block">
-            <p>{{ card.number|pretty_output }}</p>
-            <div class="cardholder_name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
-            <div class="expiration_date">{{ card.expiration_date|date:"m/y" }}</div>
-            <br/>
-            <p class="balance">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</p>
+    <div id="container">
+        <div id="container-left">
+            <div class="card-block grid">
+                <div style="grid-area: number">{{ card.number|pretty_output }}</div>
+                <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
+                <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>
+                <div style="grid-area: balance; text-align: center;">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
+            </div>
         </div>
-        <a class="under-card-buttons plus" href="put">🠕🠕</a>
-        <a class="under-card-buttons minus" href="take">🠗🠗</a>
+        <div style="border-right: 1px solid var(--sep-color)"></div>
+        <div id="container-right">
+            <h1>Templates</h1>
+        </div>
+        <div style="border-right: 1px solid var(--sep-color)"></div>
+        <div id="container-right">
+            <h1>Transactions</h1>
+        </div>
+
     </div>
 {% endblock body %}

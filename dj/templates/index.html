@@ -6,14 +6,13 @@
     <title>Main Page</title>
 {% endblock head %}
 {% block body %}
-    <div class="card-panel">
+    <div class="cards-panel">
         {% for card in cards %}
-            <a class="card-block but" href="/cards/{{ card.number }}/">
-                <p>{{ card.number|pretty_output }}</p>
-                <div class="cardholder_name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
-                <div class="expiration_date">{{ card.expiration_date|date:"m/y" }}</div>
-                <br/>
-                <p class="balance">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</p>
+            <a class="card-block grid but" href="/cards/{{ card.number }}/">
+                <div style="grid-area: number">{{ card.number|pretty_output }}</div>
+                <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
+                <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>
+                <div style="grid-area: balance; text-align: center;">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
             </a>
         {% endfor %}
         <a class="card-block but new" href="/cards/new/">+</a>
