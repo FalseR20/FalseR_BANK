@@ -45,10 +45,9 @@ class Cards(models.Model):
 
 # 6. Шаблоны операций
 class Templates(models.Model):
-    icon = models.CharField(max_length=30)
     description = models.CharField(max_length=50)
-    is_send = models.BooleanField()
     other_iban = models.CharField(max_length=34, null=True)
+    label = models.CharField(max_length=30, default="Note")
 
 
 # 7. Операции
@@ -59,5 +58,6 @@ class Transactions(models.Model):
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6)
+    note = models.CharField(max_length=50, default="")
     timestamp = models.TimeField()
     is_successful = models.BooleanField()
