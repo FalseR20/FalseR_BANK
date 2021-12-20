@@ -3,61 +3,13 @@
     {% load static %}
     {% load pretty_output %}
     <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card_page.css' %}">
     <title>Card operations</title>
-    <style>
-        #container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            justify-content: start;
-        }
-
-        #left-side {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .sep-vertical {
-            border-right: 1px solid var(--sep-color);
-        }
-
-        .sep-horizontal {
-            border-bottom: 1px solid var(--sep-color);
-        }
-
-        #container div {
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-
-        .card-block {
-            margin-right: 0;
-        }
-
-        #container-templates {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .template-button {
-            text-decoration: none;
-            color: var(--text-color);
-            width: 300px;
-            height: 20px;
-            margin: 10px;
-            padding: 10px;
-            border: 2px solid var(--text-color);
-            border-radius: 5px;
-            font-size: 16px;
-            font-family: "Verdana", "Trebuchet MS", sans-serif;
-        }
-    </style>
 {% endblock head %}
 {% block body %}
     <div id="container">
-        <div id="left-side">
-            <div class="card-block grid" style="margin-bottom: 10px">
+        <div id="left-panel">
+            <div class="card-block grid">
                 <div style="grid-area: number">{{ card.number|pretty_output }}</div>
                 <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
                 <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>
@@ -66,16 +18,15 @@
             <div class="sep-horizontal"></div>
             <div id="container-templates">
                 {% for template in templates %}
-                    <a class="template-button" href="{{ template.id }}">
-                        {{ template.description }}
-                    </a>
+                    <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
                 {% endfor %}
             </div>
+            <div class="sep-horizontal"></div>
+            <a class="template-button" href="history">HISTORY</a>
         </div>
         <div class="sep-vertical"></div>
         <div id="container-right">
             <h1>Transactions</h1>
         </div>
-
     </div>
 {% endblock body %}
