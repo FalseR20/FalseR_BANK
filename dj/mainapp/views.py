@@ -59,7 +59,7 @@ def sign_out(request):
 
 # Привязка карт
 def new_card(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.user.is_staff:
         return HttpResponseRedirect("/")
     client = Clients.objects.get(user=request.user.id)
     accounts = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
@@ -108,7 +108,6 @@ def new_card(request):
                                               day=31),
                 security_code=random.randint(1, 999),
                 iz_freeze=False)
-            # card.expiration_date.year
             card.save()
             return redirect('/')
 
@@ -117,26 +116,35 @@ def new_card(request):
 
 # Операция с выбранной картой
 def card_page(request, number):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_staff:
         client = Clients.objects.get(user=request.user.id)
         if client in Clients.objects.filter(cards__number=number):
             card = Cards.objects.get(number=number)
             templates = Templates.objects.all()
-            print(templates)
             return render(request, "card_page.html", {'card': card, 'templates': templates})
 
     return redirect('/')
 
 
-# def card_operations(request, number, operation_type):
-#     if request.user.is_authenticated and operation_type == "put" or operation_type == "take":
-#         is_put = operation_type == "put"
-#         client = Clients.objects.get(user=request.user.id)
-#         if client in Clients.objects.filter(cards__number=number):
-#             card = Cards.objects.get(number=number)
-#             templates = Templates.objects.all()
-#             print(templates)
-#             return render(request, "card_operations.html", {'card': card,
-#                                                             'templates': templates})
-#
-#     return redirect('/')
+def card_operation(request, number, template_id):
+    if request.user.is_authenticated and not request.user.is_staff:
+        client = Clients.objects.get(user=request.user.id)
+        if client in Clients.objects.filter(cards__number=number):
+            card = Cards.objects.get(number=number)
+            template_filter = Templates.objects.filter(id=template_id)
+            if template_filter:
+                template = template_filter[0]
+
+                if request.method == "POST":
+                    card_number = request.POST.get("card_number")
+                    print(card_number)
+                    if not card_number:
+                        iban = request.POST.get("iban")
+                        print(iban)
+                    value = request.POST.get("value")
+                    print(value)
+
+                else:
+                    return render(request, "card_operation.html", {'card': card, 'template': template})
+
+    return redirect('/')

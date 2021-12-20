@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/post-forms.css' %}">
+    <title>{{ template.description }}</title>
+{% endblock head %}
+{% block body %}
+    <h1 style="text-align: center;">{{ template.description }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <div class="field">
+                {% if template.is_need_card %}
+                    <label>Card number</label>
+                    <input type="number" name="card_number" maxlength="16">
+                {% elif template.is_need_iban %}
+                    <label>IBAN</label>
+                    <input type="text" name="iban" maxlength="34">
+                {% endif %}
+            </div>
+            <div class="field">
+                <label>Value ({{ card.account.currency.code }})</label>
+                <input type="number" name="value" placeholder="before {{ card.account.balance|floatformat:2 }}">
+            </div>
+            <div class="field">
+                <label>{{ template.label }}</label>
+                <input type="{{ template.note_type }}" name="note" maxlength="50">
+            </div>
+        </div>
+        <input type="submit" value="Send" class="button-top reverse"
+               style="border-radius: 5px; margin: 10px 0 0 0">
+    </form>
+{% endblock body %}
