@@ -9,11 +9,21 @@
             display: flex;
             flex-direction: row;
             flex-wrap: nowrap;
+            justify-content: start;
+        }
+
+        #left-side {
+            display: flex;
+            flex-direction: column;
             justify-content: center;
         }
 
-        #container-left {
-            justify-self: start;
+        .sep-vertical {
+            border-right: 1px solid var(--sep-color);
+        }
+
+        .sep-horizontal {
+            border-bottom: 1px solid var(--sep-color);
         }
 
         #container div {
@@ -25,24 +35,44 @@
             margin-right: 0;
         }
 
+        #container-templates {
+            display: flex;
+            flex-direction: column;
+        }
 
+        .template-button {
+            text-decoration: none;
+            color: var(--text-color);
+            width: 300px;
+            height: 20px;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid var(--text-color);
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: "Verdana", "Trebuchet MS", sans-serif;
+        }
     </style>
 {% endblock head %}
 {% block body %}
     <div id="container">
-        <div id="container-left">
-            <div class="card-block grid">
+        <div id="left-side">
+            <div class="card-block grid" style="margin-bottom: 10px">
                 <div style="grid-area: number">{{ card.number|pretty_output }}</div>
                 <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
                 <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>
                 <div style="grid-area: balance; text-align: center;">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
             </div>
+            <div class="sep-horizontal"></div>
+            <div id="container-templates">
+                {% for template in templates %}
+                    <a class="template-button" href="{{ template.id }}">
+                        {{ template.description }}
+                    </a>
+                {% endfor %}
+            </div>
         </div>
-        <div style="border-right: 1px solid var(--sep-color)"></div>
-        <div id="container-right">
-            <h1>Templates</h1>
-        </div>
-        <div style="border-right: 1px solid var(--sep-color)"></div>
+        <div class="sep-vertical"></div>
         <div id="container-right">
             <h1>Transactions</h1>
         </div>

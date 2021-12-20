@@ -121,19 +121,22 @@ def card_page(request, number):
         client = Clients.objects.get(user=request.user.id)
         if client in Clients.objects.filter(cards__number=number):
             card = Cards.objects.get(number=number)
-            return render(request, "card_page.html", {'card': card})
-
-    return redirect('/')
-
-
-def card_operations(request, number, operation_type):
-    if request.user.is_authenticated and operation_type == "put" or operation_type == "take":
-        is_put = operation_type == "put"
-        client = Clients.objects.get(user=request.user.id)
-        if client in Clients.objects.filter(cards__number=number):
-            card = Cards.objects.get(number=number)
             templates = Templates.objects.all()
-            return render(request, "card_operations.html", {'card': card, 'templates': templates})
+            print(templates)
+            return render(request, "card_page.html", {'card': card, 'templates': templates})
 
     return redirect('/')
 
+
+# def card_operations(request, number, operation_type):
+#     if request.user.is_authenticated and operation_type == "put" or operation_type == "take":
+#         is_put = operation_type == "put"
+#         client = Clients.objects.get(user=request.user.id)
+#         if client in Clients.objects.filter(cards__number=number):
+#             card = Cards.objects.get(number=number)
+#             templates = Templates.objects.all()
+#             print(templates)
+#             return render(request, "card_operations.html", {'card': card,
+#                                                             'templates': templates})
+#
+#     return redirect('/')

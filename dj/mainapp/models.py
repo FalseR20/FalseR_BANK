@@ -47,6 +47,9 @@ class Cards(models.Model):
 class Templates(models.Model):
     description = models.CharField(max_length=50)
     other_iban = models.CharField(max_length=34, null=True)
+    is_need_iban = models.BooleanField(default=False)
+    is_need_card = models.BooleanField(default=False)
+    note_type = models.TextField(default="text")
     label = models.CharField(max_length=30, default="Note")
 
 
@@ -54,7 +57,9 @@ class Templates(models.Model):
 class Transactions(models.Model):
     template = models.ForeignKey(Templates, on_delete=models.CASCADE)
     sender_iban = models.ForeignKey(Accounts, related_name="sender_iban", on_delete=models.CASCADE)
+    sender_card = models.ForeignKey(Cards, related_name="sender_card", on_delete=models.CASCADE, null=True)
     receiver_iban = models.ForeignKey(Accounts, related_name="receiver_iban", on_delete=models.CASCADE)
+    receiver_card = models.ForeignKey(Cards, related_name="receiver_card", on_delete=models.CASCADE, null=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6)

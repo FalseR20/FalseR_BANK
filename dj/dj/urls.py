@@ -11,7 +11,7 @@ urlpatterns = [
     path('sign_out/', views.sign_out),
     path('cards/new/', views.new_card),
     re_path(r'cards/(?P<number>\d+)/$', views.card_page),
-    re_path(r'cards/(?P<number>\d+)/(?P<operation_type>\D+)/$', views.card_operations),
+    # re_path(r'cards/(?P<number>\d+)/(?P<operation_type>\D+)/$', views.card_operations),
 
     path('admin/', admin.site.urls),
 ]
