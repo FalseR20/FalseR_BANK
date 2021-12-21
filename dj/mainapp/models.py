@@ -9,17 +9,23 @@ class Clients(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     fullname = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.fullname
+
 
 # 2. Валюты
 class Currencies(models.Model):
     code = models.CharField(max_length=3)
 
+    def __str__(self):
+        return self.code
+
 
 # 3. Курсы валют в разное время
 class Courses(models.Model):
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
-    course_buy = models.BigIntegerField()
-    course_sale = models.BigIntegerField()
+    course_buy = models.BigIntegerField()  # (CUR / BYN * 1 000 000)
+    course_sale = models.BigIntegerField()  # (CUR / BYN * 1 000 000)
     change_time = models.TimeField()
 
 
@@ -28,8 +34,11 @@ class Accounts(models.Model):
     iban = models.CharField(max_length=28, primary_key=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=21, decimal_places=6)
-    iz_freeze = models.BooleanField()
+    is_freeze = models.BooleanField()
     clients = models.ManyToManyField(Clients)
+
+    def __str__(self):
+        return self.iban
 
 
 # 5. Карты клиентов
@@ -40,7 +49,10 @@ class Cards(models.Model):
     cardholder_name = models.CharField(max_length=30)
     expiration_date = models.DateField()
     security_code = models.IntegerField()
-    iz_freeze = models.BooleanField()
+    is_freeze = models.BooleanField()
+
+    def __str__(self):
+        return self.number
 
 
 # 6. Шаблоны операций
@@ -50,6 +62,9 @@ class Templates(models.Model):
     is_need_iban = models.BooleanField(default=False)
     is_need_card = models.BooleanField(default=False)
     label = models.CharField(max_length=30, default="Note")
+
+    def __str__(self):
+        return self.description
 
 
 # 7. Операции

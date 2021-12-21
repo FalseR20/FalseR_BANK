@@ -31,15 +31,17 @@ def sign_up(request):
     if request.method == "POST":
         user_form = UserRegistration(request.POST)
         if user_form.is_valid():
+            username = request.POST.get("username")
             password = request.POST.get("password")
             confirm_password = request.POST.get("confirm_password")
-            if password == confirm_password:
-                username = request.POST.get("username")
+            if password == confirm_password and User.objects.filter(username=username).count() == 0:
                 user = User(username=username)
                 user.set_password(password)  # с хешированием
                 user.save()
 
                 fullname = request.POST.get("fullname")
+                if fullname == "":
+                    fullname = username
                 client = Clients(fullname=fullname)
                 client.user = user
                 client.save()
