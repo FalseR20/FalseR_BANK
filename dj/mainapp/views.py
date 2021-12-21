@@ -1,7 +1,7 @@
 import datetime
 import random
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from .models import *
@@ -146,5 +146,21 @@ def card_operation(request, number, template_id):
 
                 else:
                     return render(request, "card_operation.html", {'card': card, 'template': template})
+
+    return redirect('/')
+
+
+def card_refill(request, number):
+    if request.user.is_authenticated and not request.user.is_staff:
+        client = get_object_or_404(Clients, user=request.user.id)
+        card = get_object_or_404(Cards, pk=number, client=client)
+        if request.method == "POST":
+            value = int(request.POST.get("value"))
+            account = card.account
+            account.balance += value
+            account.save()
+            redirect(f'/cards/{number}/')
+        else:
+            return render(request, "card_refill.html", {'card': card})
 
     return redirect('/')

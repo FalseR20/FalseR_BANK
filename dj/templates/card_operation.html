@@ -11,20 +11,24 @@
         <div>
             <div class="field">
                 {% if template.is_need_card %}
-                    <label>Card number</label>
-                    <input type="number" name="card_number" maxlength="16">
+                    <label>Card number
+                        <input type="number" name="card_number" maxlength="16">
+                    </label>
                 {% elif template.is_need_iban %}
-                    <label>IBAN</label>
-                    <input type="text" name="iban" maxlength="34">
+                    <label>IBAN
+                        <input type="text" name="iban" maxlength="34">
+                    </label>
                 {% endif %}
             </div>
             <div class="field">
-                <label>Value ({{ card.account.currency.code }})</label>
-                <input type="number" name="value" placeholder="before {{ card.account.balance|floatformat:2 }}">
+                <label>Value ({{ card.account.currency.code }})
+                    <input type="number" name="value" step=".01" placeholder="before {{ card.account.balance|floatformat:2 }}">
+                </label>
             </div>
             <div class="field">
-                <label>{{ template.label }}</label>
-                <input type="{{ template.note_type }}" name="note" maxlength="50">
+                <label>{{ template.label }}
+                    <input type="text" name="note" maxlength="50">
+                </label>
             </div>
         </div>
         <input type="submit" value="Send" class="button-top reverse"

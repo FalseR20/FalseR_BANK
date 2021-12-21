@@ -49,7 +49,6 @@ class Templates(models.Model):
     other_iban = models.CharField(max_length=34, null=True)
     is_need_iban = models.BooleanField(default=False)
     is_need_card = models.BooleanField(default=False)
-    note_type = models.TextField(default="text")
     label = models.CharField(max_length=30, default="Note")
 
 

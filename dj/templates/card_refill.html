@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/post-forms.css' %}">
+    <title>Refill</title>
+{% endblock head %}
+{% block body %}
+    <h1 style="text-align: center;">Refill of card</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <div class="field">
+                <label>Value ({{ card.account.currency.code }})
+                    <input type="number" name="value" step=".01" placeholder="before 10 000">
+                </label>
+            </div>
+        </div>
+        <input type="submit" value="Refill" class="button-top reverse"
+               style="border-radius: 5px; margin: 10px 0 0 0">
+    </form>
+{% endblock body %}
