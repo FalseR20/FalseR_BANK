@@ -3,8 +3,13 @@
 
 # FALSER BANK IBAN:
 # BY-- FLSR ____ ____ ____ ____
-#           |    account type
-#            ||| currecny.code
+#           |    account type (1 - debit)
+#            ||| currency.code
+
+# FALSER BANK CARD
+# -238 14-- ---- ---
+# |  pay system
+#    control digit |
 
 def make_iban(type_and_curr: str, number: str) -> str:
     acc = type_and_curr + number
@@ -28,5 +33,24 @@ def control_iban(iban: str) -> int:
     return control == int(iban[2:4])
 
 
+def make_card(numbers15: str) -> int:
+    sum_ = 0
+    for i in range(0, 15):
+        z = ord(numbers15[i]) - 48
+        if i % 2:
+            sum_ += z
+        else:
+            z *= 2
+            sum_ += z % 10 + z // 10
+    return int(f"{numbers15}{-sum_ % 10}")
+
+
+def control_card(number: int):
+    return number == make_card(str(number)[:-1])
+
+
 if __name__ == '__main__':
-    main()
+    # print(make_iban('1BYN', '00000000000'))
+    card = make_card('456126121234546')
+    print(card)
+    print(control_card(card))

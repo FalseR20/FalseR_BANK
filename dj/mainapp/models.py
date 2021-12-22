@@ -57,6 +57,7 @@ class Cards(models.Model):
 
 # 6. Шаблоны операций
 class Templates(models.Model):
+    is_send = models.BooleanField(default=True)
     description = models.CharField(max_length=50)
     other_iban = models.CharField(max_length=34, null=True)
     is_need_iban = models.BooleanField(default=False)

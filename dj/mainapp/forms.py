@@ -3,7 +3,7 @@ from django import forms
 
 class UserRegistration(forms.Form):
     username = forms.CharField(label="Login", max_length=150, required=True)
-    fullname = forms.CharField(label="Fullname", max_length=30, required=False)
+    fullname = forms.CharField(label="Fullname", max_length=30, required=True)
     password = forms.CharField(widget=forms.PasswordInput, max_length=128, label="Password",
                                min_length=4, required=True)
     confirm_password = forms.CharField(widget=forms.PasswordInput, max_length=128, label="Confirm password",

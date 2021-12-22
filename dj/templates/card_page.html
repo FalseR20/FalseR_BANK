@@ -16,10 +16,14 @@
                 <div style="grid-area: balance; text-align: center;">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
             </div>
             <div class="sep-horizontal"></div>
-                    <a class="template-button" href="refill">Refill</a>
+            <div id="container-templates">
+                {% for template in templates_receive %}
+                    <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
+                {% endfor %}
+            </div>
             <div class="sep-horizontal"></div>
             <div id="container-templates">
-                {% for template in templates %}
+                {% for template in templates_send %}
                     <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
                 {% endfor %}
             </div>

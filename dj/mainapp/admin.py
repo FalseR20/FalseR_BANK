@@ -34,7 +34,7 @@ class CardsAdmin(admin.ModelAdmin):
 
 @admin.register(Templates)
 class TemplatesAdmin(admin.ModelAdmin):
-    list_display = ('description', 'other_iban', 'is_need_iban', 'is_need_card', 'label')
+    list_display = ('is_send', 'description', 'other_iban', 'is_need_iban', 'is_need_card', 'label')
 
 
 @admin.register(Transactions)
