@@ -1,3 +1,4 @@
+from decimal import Decimal
 import datetime
 import random
 
@@ -75,23 +76,21 @@ def new_card(request):
     cardholder_name = request.POST.get("cardholder_name").upper()
     account_post = request.POST.get("account")
 
-    # card_form = CardForm(request.POST, cardholder_name=cardholder_name)
-    # if not card_form.is_valid():
-    #     return render(request, "new_card.html", {'form': card_form})
-
     if account_post[0] == '-':
         currency_id = -int(account_post)
         while True:
+            print("1" + Currencies.objects.get(id=currency_id).code, f"{random.randint(0, 9999_9999_9999_9999):016d}",
+                  sep='\n')
             random_iban = make_iban("1" + Currencies.objects.get(id=currency_id).code,
-                                    f"{random.randint(0, 9999_9999_9999_9999): 016d}")
+                                    f"{random.randint(0, 9999_9999_9999_9999):016d}")
             if not Accounts.objects.filter(iban=random_iban).first():
                 break
-        account = client.accounts_set.create(iban=random_iban, currency_id=currency_id, balance=0, is_freeze=False)
+        account = client.accounts_set.create(iban=random_iban, currency_id=currency_id, balance=100)
         account.save()
     else:
         account = Accounts.objects.get(iban=account_post)
     while True:
-        random_number = make_card(f"{system_post: 1d}23814{random.randint(0, 9_9999_9999): 09d}")
+        random_number = make_card(f"{system_post:1d}23814{random.randint(0, 9_9999_9999):09d}")
         if not Cards.objects.filter(number=random_number):
             break
     card = Cards.objects.create(
@@ -101,9 +100,7 @@ def new_card(request):
         cardholder_name=cardholder_name,
         expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
                                       month=datetime.datetime.now().month,
-                                      day=31),
-        security_code=random.randint(1, 999),
-        is_freeze=False)
+                                      day=31))
     card.save()
     return redirect('/')
 
@@ -112,31 +109,60 @@ def new_card(request):
 @login_required
 def card_page(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
-    card = get_object_or_404(Cards, number=number, client=client)
-    return render(request, "card_page.html", {'card': card,
-                                              'templates_receive': Templates.objects.filter(is_send=False),
-                                              'templates_send': Templates.objects.filter(is_send=True)})
+    return render(request, "card_page.html", {'card': get_object_or_404(Cards, number=number, client=client),
+                                              'templates': Templates.objects.all()})
 
 
-@login_required()
+# Страница подтверждения операции
+@login_required
 def card_operation(request, number, template_id):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     template = get_object_or_404(Templates, id=template_id)
-
     if request.method == "GET":
         return render(request, "card_operation.html", {'card': card, 'template': template})
 
-    value = int(request.POST.get("value"))
     account = card.account
-    if template.is_need_card:
-        other_card_number = request.POST.get("card_number")
-    elif template.is_need_iban:
+    value = Decimal(request.POST.get("value"))
+    if value > account.balance:
+        return render(request, "card_operation.html", {'card': card, 'template': template})
+    account.balance -= value
+    account.save()
+    info = request.POST.get("info")
+    other_iban = template.other_iban
+    if not other_iban:
         other_iban = request.POST.get("iban")
 
-    if template.is_send:
-        pass
-    else:
-        account.balance += value
-        account.save()
+    transaction = Transactions.objects.create(template=template, sender_iban=account.iban, receiver_iban=other_iban,
+                                              currency=account.currency, value=value, info=info)
+    transaction.save()
+
+    other_account = Accounts.objects.filter(iban=other_iban).first()
+    if other_account:
+        if account.currency == other_account.currency:
+            other_account.balance += value
+        else:
+            other_account.balance += (
+                    value
+                    * Courses.objects.filter(currency=account.currency.id).latest('change_time').course_sale
+                    / Courses.objects.filter(currency=other_account.currency.id).latest('change_time').course_buy
+            )
+        other_account.save()
     return redirect(f'/cards/{number}/')
+
+
+@login_required
+def info(request, number):
+    client = get_object_or_404(Clients, user=request.user.id)
+    card = get_object_or_404(Cards, number=number, client=client)
+    account = card.account
+    info_dict = {
+        'number': card.number,
+        'cardholder_name': card.cardholder_name,
+        'expiration_date': card.expiration_date.strftime('%m/%y'),
+        'security_code': card.security_code,
+        '-': '-',
+        'iban': account.iban,
+        'balance': f"{account.balance: .2f} {account.currency}",
+    }
+    return render(request, "card_info.html", {"info_dict": info_dict})

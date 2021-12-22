@@ -1,3 +1,6 @@
+from functools import partial
+import random
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -24,9 +27,9 @@ class Currencies(models.Model):
 # 3. Курсы валют в разное время
 class Courses(models.Model):
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
-    course_buy = models.BigIntegerField()  # (CUR / BYN * 1 000 000)
-    course_sale = models.BigIntegerField()  # (CUR / BYN * 1 000 000)
-    change_time = models.TimeField()
+    course_buy = models.BigIntegerField()  # (BYN / CUR * 1 000 000)
+    course_sale = models.BigIntegerField()  # (BYN / CUR * 1 000 000)
+    change_time = models.TimeField(auto_now_add=True)
 
 
 # 4. Счета клиентов в разных валютах
@@ -34,7 +37,7 @@ class Accounts(models.Model):
     iban = models.CharField(max_length=28, primary_key=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=21, decimal_places=6)
-    is_freeze = models.BooleanField()
+    balance_freeze = models.DecimalField(max_digits=21, decimal_places=6, default=0)
     clients = models.ManyToManyField(Clients)
 
     def __str__(self):
@@ -48,8 +51,8 @@ class Cards(models.Model):
     account = models.ForeignKey(Accounts, on_delete=models.CASCADE)
     cardholder_name = models.CharField(max_length=30)
     expiration_date = models.DateField()
-    security_code = models.IntegerField()
-    is_freeze = models.BooleanField()
+    security_code = models.IntegerField(default=partial(random.randint, 1, 999))
+    is_freeze = models.BooleanField(default=False)
 
     def __str__(self):
         return self.number
@@ -57,12 +60,9 @@ class Cards(models.Model):
 
 # 6. Шаблоны операций
 class Templates(models.Model):
-    is_send = models.BooleanField(default=True)
     description = models.CharField(max_length=50)
     other_iban = models.CharField(max_length=34, null=True)
-    is_need_iban = models.BooleanField(default=False)
-    is_need_card = models.BooleanField(default=False)
-    label = models.CharField(max_length=30, default="Note")
+    info_label = models.CharField(max_length=30, default="Note")
 
     def __str__(self):
         return self.description
@@ -71,13 +71,11 @@ class Templates(models.Model):
 # 7. Операции
 class Transactions(models.Model):
     template = models.ForeignKey(Templates, on_delete=models.CASCADE)
-    sender_iban = models.ForeignKey(Accounts, related_name="sender_iban", on_delete=models.CASCADE)
-    sender_card = models.ForeignKey(Cards, related_name="sender_card", on_delete=models.CASCADE, null=True)
-    receiver_iban = models.ForeignKey(Accounts, related_name="receiver_iban", on_delete=models.CASCADE)
-    receiver_card = models.ForeignKey(Cards, related_name="receiver_card", on_delete=models.CASCADE, null=True)
+    sender_iban = models.CharField(max_length=34)
+    receiver_iban = models.CharField(max_length=34)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
-    commission = models.DecimalField(max_digits=21, decimal_places=6)
-    note = models.CharField(max_length=50, default="")
-    timestamp = models.TimeField()
-    is_successful = models.BooleanField()
+    commission = models.DecimalField(max_digits=21, decimal_places=6, default=0)
+    info = models.CharField(max_length=50)
+    timestamp = models.TimeField(auto_now_add=True)
+    is_successful = models.BooleanField(default=True)

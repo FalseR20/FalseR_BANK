@@ -30,12 +30,10 @@ values (1, 1000000, 1000000, now(), 1),
        (2, 2500000, 2500000, now(), 2);
 
 
-insert into mainapp_templates(is_send, description, other_iban, is_need_card, is_need_iban, label)
-values (true, 'Replenishment of account МТС', 'BY51MMBN30120086600109330000', false, false, 'Number of telephone'),
-       (true, 'Replenishment to other card', null, true, false, 'Message'),
-       (true, 'Replenishment to other account', null, false, true, 'Message'),
-       (false, 'Replenishment from ATM', 'BY49FLSR1BYN00000000000', false, false, 'Note'),
-       (false, 'Replenishment from other card', null, true, false, 'MessageToDodic');
+insert into mainapp_templates(description, other_iban, info_label)
+values ('Send to account МТС', 'BY51MMBN30120086600109330000', 'Number of phone'),
+       ('Send to other account', null, 'Message');
+
 
 -- delete
 delete

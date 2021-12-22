@@ -19,25 +19,20 @@ class CoursesAdmin(admin.ModelAdmin):
 
 @admin.register(Accounts)
 class AccountsAdmin(admin.ModelAdmin):
-    list_display = ('iban', 'currency', 'balance', 'is_freeze')
+    list_display = ('iban', 'currency', 'balance', 'balance_freeze')
 
 
 @admin.register(Cards)
 class CardsAdmin(admin.ModelAdmin):
-    list_display = ('number', 'client', 'account', 'cardholder_name', 'expiration_date', 'display_code', 'is_freeze')
-
-    def display_code(self, obj):
-        return "***"
-
-    display_code.short_description = 'security_code'
+    list_display = ('number', 'client', 'account', 'cardholder_name', 'expiration_date', 'is_freeze')
 
 
 @admin.register(Templates)
 class TemplatesAdmin(admin.ModelAdmin):
-    list_display = ('is_send', 'description', 'other_iban', 'is_need_iban', 'is_need_card', 'label')
+    list_display = ('description', 'other_iban', 'info_label')
 
 
 @admin.register(Transactions)
 class TransactionsAdmin(admin.ModelAdmin):
-    list_display = ('template', 'sender_iban', 'sender_card', 'receiver_iban', 'receiver_card',
-                    'currency', 'value', 'commission', 'note', 'timestamp', 'is_successful')
+    list_display = ('template', 'sender_iban', 'receiver_iban',
+                    'currency', 'value', 'commission', 'info', 'timestamp', 'is_successful')

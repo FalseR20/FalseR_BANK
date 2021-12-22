@@ -9,47 +9,22 @@
     <form method="POST">
         {% csrf_token %}
         <div>
-            {% if template.is_need_card %}
-                <div class="field">
-                    <label>Card number
-                        <input type="number" name="card_number" maxlength="16" required>
-                    </label>
-                </div>
-                {% if not template.is_send %}
-                    <div class="field">
-                        <label>Expiration date
-                            <input type="month" name="expiration_date" required>
-                        </label>
-                    </div>
-                    <div class="field">
-                        <label>Cardholder name
-                            <input type="text" name="cardholder_name" required>
-                        </label>
-                    </div>
-                    <div class="field">
-                        <label>Security code
-                            <input type="password" name="security_code" required>
-                        </label>
-                    </div>
-                {% endif %}
-            {% elif template.is_need_iban %}
+            {% if not template.other_iban %}
                 <div class="field">
                     <label>IBAN
                         <input type="text" name="iban" maxlength="34" required>
                     </label>
                 </div>
             {% endif %}
-
             <div class="field">
-                <label>Value ({{ card.account.currency.code }})
+                <label>Value (before {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }})
                     <input type="number" name="value" step=".01" min="0" required
-                           placeholder="before {{ card.account.balance|floatformat:2 }}"
                            max="{{ card.account.balance|floatformat:2 }}">
                 </label>
             </div>
             <div class="field">
-                <label>{{ template.label }}
-                    <input type="text" name="note" maxlength="50" required>
+                <label>{{ template.info_label }}
+                    <input type="text" name="info" maxlength="50">
                 </label>
             </div>
         </div>

@@ -17,18 +17,12 @@
             </div>
             <div class="sep-horizontal"></div>
             <div id="container-templates">
-                {% for template in templates_receive %}
+                {% for template in templates %}
                     <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
                 {% endfor %}
             </div>
             <div class="sep-horizontal"></div>
-            <div id="container-templates">
-                {% for template in templates_send %}
-                    <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
-                {% endfor %}
-            </div>
-            <div class="sep-horizontal"></div>
-            <a class="template-button" href="history">HISTORY</a>
+            <a class="template-button" href="info">ALL INFO</a>
         </div>
         <div class="sep-vertical"></div>
         <div id="container-right">
