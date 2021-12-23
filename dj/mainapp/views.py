@@ -159,6 +159,7 @@ def card_operation(request, number, template_id):
     return redirect(f'/cards/{number}/')
 
 
+# Страничка с информацией о карте
 @login_required
 def info(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
@@ -169,7 +170,7 @@ def info(request, number):
         'cardholder_name': card.cardholder_name,
         'expiration_date': card.expiration_date.strftime('%m/%y'),
         'security_code': card.security_code,
-        '---': '---',
+        '———': '———',
         'iban': account.iban,
         'balance': f"{account.balance: .2f} {account.currency}",
     }

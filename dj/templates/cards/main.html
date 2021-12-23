@@ -4,7 +4,40 @@
     {% load pretty_output %}
     <link rel="stylesheet" href="{% static 'css/cards.css' %}">
     <link rel="stylesheet" href="{% static 'css/card_page.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tables.css' %}">
     <title>Card page</title>
+    <style>
+        table {
+            margin-top: 10px;
+        }
+
+        table tr td {
+            padding: 5px;
+            border-bottom: 1px solid var(--sep-color);
+        }
+
+        table tr td:nth-child(1) {
+            width: 20px;
+        }
+
+        table tr td:nth-child(2) {
+            width: 200px;
+        }
+
+        table tr td:nth-child(3) {
+            width: 100px;
+            text-align: right;
+        }
+
+        table tr td:nth-child(4) {
+            width: 50px;
+        }
+
+        table tr td:nth-child(5) {
+            width: 160px;
+            text-align: right;
+        }
+    </style>
 {% endblock head %}
 {% block body %}
     <div id="container">
@@ -13,7 +46,8 @@
                 <div style="grid-area: number">{{ card.number|pretty_output }}</div>
                 <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
                 <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>
-                <div style="grid-area: balance; text-align: center;">{{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
+                <div style="grid-area: balance; text-align: center;">
+                    {{ card.account.balance|floatformat:2 }} {{ card.account.currency.code }}</div>
             </div>
             <div class="sep-horizontal"></div>
             <div id="container-templates">
@@ -26,7 +60,7 @@
         </div>
         <div class="sep-vertical"></div>
         <div id="container-right">
-            <h1>Transactions</h1>
+{#            <h1>Transactions</h1>#}
             <div class="transaction-block">
                 <table>
                     {% for transaction in transactions %}

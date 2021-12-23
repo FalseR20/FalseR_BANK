@@ -2,49 +2,37 @@
 {% block head %}
     {% load static %}
     {% load pretty_output %}
+    <link rel="stylesheet" href="{% static 'css/tables.css' %}">
     <title>ALL INFO</title>
     <style>
-        table {
-            border: 3px solid var(--theme-color);
-            border-radius: 5px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 600px;
-        {#border-collapse: collapse;#}
+        h1 {
+            text-align: center;
         }
 
-        td {
-            font-size: 20px;
-        {#width: 50%;#}
-
+        table tr td {
+            padding: 5px;
         }
 
         table tr td:nth-child(1) {
-            width: 40%;
+            width: 200px;
             font-weight: bold;
             text-align: right;
-        {#border: 1px solid var(--sep-color);#} padding-right: 40px;
+            padding-right: 30px;
             padding-bottom: 5px;
         }
 
         table tr td:nth-child(2) {
-            width: 60%;
+            width: 350px;
         }
-
-
     </style>
 {% endblock head %}
 {% block body %}
-    <h1 style="text-align: center;">Info about card</h1>
+    <h1>Info about card</h1>
     <table>
         {% for key, value in info_dict.items %}
             <tr>
                 <td>{{ key }}</td>
-{#                {% if key == "number" or key == "iban" %}#}
-{#                    <td>{{ value|pretty_output }}</td>#}
-{#                {% else %}#}
-                    <td>{{ value }}</td>
-{#                {% endif %}#}
+                <td>{{ value }}</td>
             </tr>
         {% endfor %}
     </table>

@@ -20,7 +20,8 @@
 
 .sep-horizontal {
     border-bottom: 1px solid var(--sep-color);
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    margin-right: 5px;
 }
 
 #container-templates {
