@@ -3,6 +3,7 @@ import datetime
 import random
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from .models import *
@@ -109,8 +110,15 @@ def new_card(request):
 @login_required
 def card_page(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
-    return render(request, "cards/main.html", {'card': get_object_or_404(Cards, number=number, client=client),
-                                              'templates': Templates.objects.all()})
+    card = get_object_or_404(Cards, number=number, client=client)
+    transactions = Transactions.objects.filter(
+        Q(sender_iban=card.account.iban) |
+        Q(receiver_iban=card.account.iban)
+    )
+    return render(request, "cards/main.html", {'card': card,
+                                               'templates': Templates.objects.all(),
+                                               'transactions': transactions,
+                                               'user_iban': card.account.iban})
 
 
 # Страница подтверждения операции
@@ -124,7 +132,7 @@ def card_operation(request, number, template_id):
 
     account = card.account
     value = Decimal(request.POST.get("value"))
-    if value > account.balance:
+    if value > account.balance - account.balance_freeze:
         return render(request, "cards/operations.html", {'card': card, 'template': template})
     account.balance -= value
     account.save()

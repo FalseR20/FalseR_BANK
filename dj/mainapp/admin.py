@@ -35,4 +35,4 @@ class TemplatesAdmin(admin.ModelAdmin):
 @admin.register(Transactions)
 class TransactionsAdmin(admin.ModelAdmin):
     list_display = ('template', 'sender_iban', 'receiver_iban',
-                    'currency', 'value', 'commission', 'info', 'timestamp', 'is_successful')
+                    'currency', 'value', 'commission', 'info', 'datetime', 'is_successful')

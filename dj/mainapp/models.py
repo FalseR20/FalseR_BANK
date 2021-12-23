@@ -77,5 +77,5 @@ class Transactions(models.Model):
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6, default=0)
     info = models.CharField(max_length=50)
-    timestamp = models.TimeField(auto_now_add=True)
+    datetime = models.DateTimeField(auto_now_add=True)
     is_successful = models.BooleanField(default=True)

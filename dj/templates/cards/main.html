@@ -27,6 +27,33 @@
         <div class="sep-vertical"></div>
         <div id="container-right">
             <h1>Transactions</h1>
+            <div class="transaction-block">
+                <table>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>
+                                {% if transaction.sender_iban == user_iban %}
+                                    🠗🠗
+                                {% else %}
+                                    🠕🠕
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ transaction.template.description }}
+                            </td>
+                            <td>
+                                {{ transaction.value|floatformat:2 }}
+                            </td>
+                            <td>
+                                {{ transaction.currency.code }}
+                            </td>
+                            <td>
+                                {{ transaction.datetime|date:"d.m.Y G:i" }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
 {% endblock body %}

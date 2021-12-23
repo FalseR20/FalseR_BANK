@@ -23,11 +23,13 @@ from mainapp_cards;
 -- insert currencies
 insert into mainapp_currencies(id, code)
 values (1, 'BYN'),
-       (2, 'USD');
+       (2, 'USD'),
+       (3, 'EUR');
 
-insert into mainapp_courses(id, course_buy, course_sale, change_time, currency_id)
-values (1, 1000000, 1000000, now(), 1),
-       (2, 2500000, 2500000, now(), 2);
+insert into mainapp_courses(course_buy, course_sale, currency_id, change_time)
+values (1000000, 1000000, 1, now()),
+       (2515000, 2525000, 2, now()),
+       (2845000, 2855000, 3, now());
 
 
 insert into mainapp_templates(description, other_iban, info_label)
