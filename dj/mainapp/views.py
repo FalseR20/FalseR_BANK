@@ -69,7 +69,7 @@ def new_card(request):
     card_form = CardForm(account_choices=accounts, cardholder_name=client.fullname.upper())
 
     if request.method == "GET":
-        return render(request, "new_card.html", {'form': card_form})
+        return render(request, "cards/new.html", {'form': card_form})
 
     system_post = int(request.POST.get("system"))
     time_post = int(request.POST.get("time"))
@@ -109,7 +109,7 @@ def new_card(request):
 @login_required
 def card_page(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
-    return render(request, "card_page.html", {'card': get_object_or_404(Cards, number=number, client=client),
+    return render(request, "cards/main.html", {'card': get_object_or_404(Cards, number=number, client=client),
                                               'templates': Templates.objects.all()})
 
 
@@ -120,12 +120,12 @@ def card_operation(request, number, template_id):
     card = get_object_or_404(Cards, number=number, client=client)
     template = get_object_or_404(Templates, id=template_id)
     if request.method == "GET":
-        return render(request, "card_operation.html", {'card': card, 'template': template})
+        return render(request, "cards/operations.html", {'card': card, 'template': template})
 
     account = card.account
     value = Decimal(request.POST.get("value"))
     if value > account.balance:
-        return render(request, "card_operation.html", {'card': card, 'template': template})
+        return render(request, "cards/operations.html", {'card': card, 'template': template})
     account.balance -= value
     account.save()
     info = request.POST.get("info")
@@ -161,8 +161,8 @@ def info(request, number):
         'cardholder_name': card.cardholder_name,
         'expiration_date': card.expiration_date.strftime('%m/%y'),
         'security_code': card.security_code,
-        '-': '-',
+        '---': '---',
         'iban': account.iban,
         'balance': f"{account.balance: .2f} {account.currency}",
     }
-    return render(request, "card_info.html", {"info_dict": info_dict})
+    return render(request, "cards/info.html", {"info_dict": info_dict})

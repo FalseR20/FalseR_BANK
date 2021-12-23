@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    {% load pretty_output %}
+    <title>ALL INFO</title>
+    <style>
+        table {
+            border: 3px solid var(--theme-color);
+            border-radius: 5px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 600px;
+        {#border-collapse: collapse;#}
+        }
+
+        td {
+            font-size: 20px;
+        {#width: 50%;#}
+
+        }
+
+        table tr td:nth-child(1) {
+            width: 40%;
+            font-weight: bold;
+            text-align: right;
+        {#border: 1px solid var(--sep-color);#} padding-right: 40px;
+            padding-bottom: 5px;
+        }
+
+        table tr td:nth-child(2) {
+            width: 60%;
+        }
+
+
+    </style>
+{% endblock head %}
+{% block body %}
+    <h1 style="text-align: center;">Info about card</h1>
+    <table>
+        {% for key, value in info_dict.items %}
+            <tr>
+                <td>{{ key }}</td>
+{#                {% if key == "number" or key == "iban" %}#}
+{#                    <td>{{ value|pretty_output }}</td>#}
+{#                {% else %}#}
+                    <td>{{ value }}</td>
+{#                {% endif %}#}
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock body %}
