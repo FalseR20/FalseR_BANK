@@ -30,26 +30,22 @@ def index(request):
 # Регистрация
 def sign_up(request):
     if request.method == "GET":
-        user_form = UserRegistration()
-        return render(request, "registration/signup.html", {"form": user_form})
+        return render(request, "input_page.html", {"form": RegistrationForm(), 'operation': "Registration",
+                                                   'button_value': "Sign up", 'is_need_agreement': True})
 
-    user_form = UserRegistration(request.POST)
-    username = request.POST.get("username")
-    password = request.POST.get("password")
-    confirm_password = request.POST.get("confirm_password")
+    form = RegistrationForm(request.POST)
+    if not form.is_valid():
+        return render(request, "input_page.html", {"form": form, 'operation': "Registration",
+                                                   'button_value': "Sign up", 'is_need_agreement': True})
 
-    if not user_form.is_valid() or password != confirm_password \
-            or User.objects.filter(username=username).first():
-        return render(request, "registration/signup.html", {"form": user_form})
+    username = form.cleaned_data["username"]
+    fullname = form.cleaned_data["fullname"]
+    password = form.cleaned_data["password"]
 
     user = User(username=username)
     user.set_password(password)  # с хешированием
     user.save()
-
-    fullname = request.POST.get("fullname")
-    client = Clients(fullname=fullname)
-    client.user = user
-    client.save()
+    Clients.objects.create(fullname=fullname, user=user)
     login(request, user)
     return redirect("/")
 

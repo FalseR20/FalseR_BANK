@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/post-forms.css' %}">
+    <title>{{ operation }}</title>
+{% endblock head %}
+{% block body %}
+    <h1>{{ operation }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            {% if form.non_field_errors %}
+                <div class="div-errors">
+                    {% for error in form.non_field_errors %}
+                        <label class="label-error">
+                            {{ error }}
+                        </label>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    <div>{{ field }}</div>
+                    {% if field.errors %}
+                        <div class="div-errors">
+                            {% for error in field.errors %}
+                                <label class="label-error">
+                                    {{ error }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if is_need_agreement %}
+            <label>By clicking the button I accept the <br/></label>
+            <a href="/static/pdf/User%20Agreement.pdf" target="_blank">User Agreement<br/></a>
+        {% endif %}
+        <input type="submit" value="{{ button_value }}" class="button-top reverse">
+    </form>
+{% endblock body %}

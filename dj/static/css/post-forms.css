@@ -1,12 +1,19 @@
+h1 {
+    text-align: center;
+}
+
 form {
     width: 300px;
     margin-left: auto;
     margin-right: auto;
 }
 
+.field {
+    margin-bottom: 20px;
+}
+
 .field input, .field select {
     width: 300px;
-    margin-bottom: 20px;
     padding: 8px;
     border: 4px solid var(--theme-color);
     border-radius: 5px;
@@ -18,8 +25,22 @@ form {
     width: 324px;
 }
 
-.field label {
+label {
     font-family: "Verdana", "Trebuchet MS", sans-serif;
     font-size: 14px;
     cursor: text;
+}
+
+.div-errors {
+    margin-bottom: 15px;
+}
+
+.label-error {
+    color: orangered;
+    font-size: 13px;
+}
+
+.button-top.reverse {
+    border-radius: 5px;
+    margin: 10px 0 0 0;
 }
