@@ -38,3 +38,14 @@ class CardForm(forms.Form):
                                                          initial=cardholder_name, widget=forms.TextInput(attrs={
                                                              "oninput": "this.value = this.value.toUpperCase()"}))
         self.fields['account'] = forms.ChoiceField(label="Account", choices=account_choices)
+
+
+class OperationForm(forms.Form):
+    def __init__(self, template, balance, *args, **kwargs):
+        super(OperationForm, self).__init__(*args, **kwargs)
+
+        if not template.other_iban:
+            self.fields['iban'] = forms.CharField(label="IBAN", max_length=34, required=True)
+        self.fields['value'] = forms.DecimalField(label=f"Before {balance}", max_value=balance, min_value=0,
+                                                  decimal_places=2, required=True)
+        self.fields['info'] = forms.CharField(label=template.info_label, max_length=50)

@@ -127,19 +127,28 @@ def card_operation(request, number, template_id):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     template = get_object_or_404(Templates, id=template_id)
-    if request.method == "GET":
-        return render(request, "cards/operations.html", {'card': card, 'template': template})
-
     account = card.account
-    value = Decimal(request.POST.get("value"))
-    if value > account.balance - account.balance_freeze:
-        return render(request, "cards/operations.html", {'card': card, 'template': template})
+    balance = account.balance - account.balance_freeze
+    form = OperationForm(template, f"{balance:.2f}")
+    if request.method == "GET":
+        return render(request, "input_page.html", {"form": form, 'operation': template.description,
+                                                   'button_value': "Send"})
+
+    form = OperationForm(template, balance, request.POST)
+    if not form.is_valid():
+        return render(request, "input_page.html", {"form": form, 'operation': template.description,
+                                                   'button_value': "Send"})
+
+    value = Decimal(form.cleaned_data["value"])
+    if value > balance:
+        return render(request, "input_page.html", {"form": form, 'operation': template.description,
+                                                   'button_value': "Send"})
     account.balance -= value
     account.save()
-    info = request.POST.get("info")
+    info = form.cleaned_data["info"]
     other_iban = template.other_iban
     if not other_iban:
-        other_iban = request.POST.get("iban")
+        other_iban = form.cleaned_data["iban"]
 
     transaction = Transactions.objects.create(template=template, sender_iban=account.iban, receiver_iban=other_iban,
                                               currency=account.currency, value=value, info=info)
