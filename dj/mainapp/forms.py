@@ -34,6 +34,7 @@ class CardForm(forms.Form):
 
     def __init__(self, account_choices, cardholder_name, *args, **kwargs):
         super(CardForm, self).__init__(*args, **kwargs)
-        self.fields['cardholder_name'] = forms.CharField(label="Cardholder name", initial=cardholder_name,
-                                                         max_length=30)
+        self.fields['cardholder_name'] = forms.CharField(label="Cardholder name", max_length=30,
+                                                         initial=cardholder_name, widget=forms.TextInput(attrs={
+                                                             "oninput": "this.value = this.value.toUpperCase()"}))
         self.fields['account'] = forms.ChoiceField(label="Account", choices=account_choices)

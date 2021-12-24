@@ -30,7 +30,8 @@ def index(request):
 # Регистрация
 def sign_up(request):
     if request.method == "GET":
-        return render(request, "input_page.html", {"form": RegistrationForm(), 'operation': "Registration",
+        form = RegistrationForm()
+        return render(request, "input_page.html", {"form": form, 'operation': "Registration",
                                                    'button_value': "Sign up", 'is_need_agreement': True})
 
     form = RegistrationForm(request.POST)
@@ -60,37 +61,41 @@ def sign_out(request):
 @login_required
 def new_card(request):
     client = get_object_or_404(Clients, user=request.user.id)
-    accounts = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
-                      Accounts.objects.filter(clients=client)) +
-                tuple((str(-currency.id), f"New account in {currency.code}") for currency in Currencies.objects.all()))
-    card_form = CardForm(account_choices=accounts, cardholder_name=client.fullname.upper())
+    accounts_and_currencies = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
+                                     Accounts.objects.filter(clients=client)) +
+                               tuple((str(-currency.id), f"New account in {currency.code}") for currency in
+                                     Currencies.objects.all()))
+    form = CardForm(accounts_and_currencies, client.fullname.upper())
 
     if request.method == "GET":
-        return render(request, "cards/new.html", {'form': card_form})
+        return render(request, "input_page.html", {"form": form,
+                                                   'operation': "New card", 'button_value': "Create card"})
 
-    system_post = int(request.POST.get("system"))
-    time_post = int(request.POST.get("time"))
-    cardholder_name = request.POST.get("cardholder_name").upper()
-    account_post = request.POST.get("account")
+    form = CardForm(accounts_and_currencies, client.fullname.upper(), request.POST)
+    if not form.is_valid():
+        return render(request, "input_page.html", {"form": form,
+                                                   'operation': "New card", 'button_value': "Create card"})
+
+    system_post = int(form.cleaned_data["system"])
+    time_post = int(form.cleaned_data["time"])
+    cardholder_name = form.cleaned_data["cardholder_name"].upper()
+    account_post = form.cleaned_data["account"]
 
     if account_post[0] == '-':
         currency_id = -int(account_post)
         while True:
-            print("1" + Currencies.objects.get(id=currency_id).code, f"{random.randint(0, 9999_9999_9999_9999):016d}",
-                  sep='\n')
             random_iban = make_iban("1" + Currencies.objects.get(id=currency_id).code,
                                     f"{random.randint(0, 9999_9999_9999_9999):016d}")
             if not Accounts.objects.filter(iban=random_iban).first():
                 break
         account = client.accounts_set.create(iban=random_iban, currency_id=currency_id, balance=100)
-        account.save()
     else:
         account = Accounts.objects.get(iban=account_post)
     while True:
         random_number = make_card(f"{system_post:1d}23814{random.randint(0, 9_9999_9999):09d}")
         if not Cards.objects.filter(number=random_number):
             break
-    card = Cards.objects.create(
+    Cards.objects.create(
         number=random_number,
         client=client,
         account=account,
@@ -98,7 +103,6 @@ def new_card(request):
         expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
                                       month=datetime.datetime.now().month,
                                       day=31))
-    card.save()
     return redirect('/')
 
 
