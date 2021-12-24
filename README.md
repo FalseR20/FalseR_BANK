@@ -12,7 +12,7 @@
 1. cd dj
 2. python manage.py migrate
 3. python manage.py createsuperuser
-4. add currencies and default courses (CUR / BYN * 1 000 000) in admin panel
+4. add currencies and default courses (BYN / CUR * 1 000 000) in admin panel
 
 ## Running
 1. python manage.py runserver
