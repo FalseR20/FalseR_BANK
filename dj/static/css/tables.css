@@ -10,3 +10,33 @@ td {
     font-size: 20px;
 }
 
+.table-transactions {
+    margin-top: 10px;
+}
+
+.table-transactions tr td {
+    padding: 5px;
+    border-bottom: 1px solid var(--sep-color);
+}
+
+.table-transactions tr td:nth-child(1) {
+    width: 20px;
+}
+
+.table-transactions tr td:nth-child(2) {
+    width: 200px;
+}
+
+.table-transactions tr td:nth-child(3) {
+    width: 100px;
+    text-align: right;
+}
+
+.table-transactions tr td:nth-child(4) {
+    width: 50px;
+}
+
+.table-transactions tr td:nth-child(5) {
+    width: 160px;
+    text-align: right;
+}

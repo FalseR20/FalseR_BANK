@@ -237,7 +237,7 @@ def template_operation(request, number, template_id):
 
 # Страничка с информацией о карте
 @login_required
-def info(request, number):
+def card_info(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     account = card.account
@@ -252,5 +252,33 @@ def info(request, number):
         'Balance': f"{account.balance: .2f} {account.currency}",
         'Freeze balance': f"{account.balance_freeze: .2f} {account.currency}",
         'Account is closed': account.is_closed,
+    }
+    return render(request, "cards/info.html", {"info_dict": info_dict})
+
+
+# Страничка с информацией о транзакции
+@login_required
+def card_info(request, number, transaction_id):
+    client = get_object_or_404(Clients, user=request.user.id)
+    card = get_object_or_404(Cards, number=number, client=client)
+    if not card:
+        return redirect('/')
+    transaction = get_object_or_404(Transactions, id=transaction_id)
+    template = transaction.template
+
+    info_dict = {
+        'id': transaction.id,
+        "Description": template.description if template else "Sending by parameters",
+        "Sender's iban": transaction.sender_iban,
+        "Receiver's iban": transaction.receiver_iban,
+        "Sender's card number": transaction.sender_card_number,
+        "Receiver's card number": transaction.receiver_card_number,
+        "Value": f"{transaction.value:.2f} {transaction.currency.code}",
+        "Commission": f"{transaction.commission:.2f} {transaction.currency.code}",
+        "Date and time": transaction.datetime,
+        template.info_label if template else "Message": transaction.info,
+        "Transaction is success": transaction.is_successful,
+
+
     }
     return render(request, "cards/info.html", {"info_dict": info_dict})
