@@ -11,7 +11,9 @@ urlpatterns = [
     path('sign_out/', views.sign_out),
     path('cards/new/', views.new_card),
     re_path(r'cards/(?P<number>\d+)/$', views.card_page),
-    re_path(r'cards/(?P<number>\d+)/(?P<template_id>\d+)/$', views.card_operation),
+    re_path(r'cards/(?P<number>\d+)/send_to_account/$', views.send_to_account),
+    re_path(r'cards/(?P<number>\d+)/send_to_card/$', views.send_to_card),
+    re_path(r'cards/(?P<number>\d+)/(?P<template_id>\d+)/$', views.template_operation),
     re_path(r'cards/(?P<number>\d+)/info/$', views.info),
 
     path('admin/', admin.site.urls),

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -26,26 +28,37 @@ class RegistrationForm(forms.Form):
             raise ValidationError({'password': message, 'confirm_password': message})
 
 
-class CardForm(forms.Form):
+class NewCardForm(forms.Form):
     system = forms.ChoiceField(label="System", choices=((4, "Visa"), (5, "Mastercard")))  # , (9, "БЕЛКАРТ")
     time = forms.ChoiceField(label="Service time",
                              choices=((1, "1 year"), (2, "2 years"), (3, "3 years"), (4, "4 years"), (5, "5 years")),
                              initial=4)
 
     def __init__(self, account_choices, cardholder_name, *args, **kwargs):
-        super(CardForm, self).__init__(*args, **kwargs)
-        self.fields['cardholder_name'] = forms.CharField(label="Cardholder name", max_length=30,
-                                                         initial=cardholder_name, widget=forms.TextInput(attrs={
-                                                             "oninput": "this.value = this.value.toUpperCase()"}))
+        super(NewCardForm, self).__init__(*args, **kwargs)
+        self.fields['cardholder_name'] = forms.CharField(
+            label="Cardholder name", max_length=30, initial=cardholder_name,
+            widget=forms.TextInput(attrs={"oninput": "this.value = this.value.toUpperCase()"})
+        )
         self.fields['account'] = forms.ChoiceField(label="Account", choices=account_choices)
 
 
 class OperationForm(forms.Form):
-    def __init__(self, template, balance, *args, **kwargs):
+    def __init__(self, balance, currency_code, info_label, *args, **kwargs):
         super(OperationForm, self).__init__(*args, **kwargs)
+        self.fields['value'] = forms.DecimalField(label=f"Value (before {balance:.2f} {currency_code})",
+                                                  min_value=Decimal("0.01"), max_value=balance,
+                                                  max_digits=10, decimal_places=2, required=True)
+        self.fields['info'] = forms.CharField(label=info_label, max_length=50, required=False)
 
-        if not template.other_iban:
-            self.fields['iban'] = forms.CharField(label="IBAN", max_length=34, required=True)
-        self.fields['value'] = forms.DecimalField(label=f"Before {balance}", max_value=balance, min_value=0,
-                                                  decimal_places=2, required=True)
-        self.fields['info'] = forms.CharField(label=template.info_label, max_length=50)
+
+class AccountOperationForm(OperationForm):
+    def __init__(self, *args, **kwargs):
+        super(AccountOperationForm, self).__init__(*args, **kwargs)
+        self.fields['iban'] = forms.CharField(label="IBAN", max_length=34, required=True)
+
+
+class CardOperationForm(OperationForm):
+    def __init__(self, *args, **kwargs):
+        super(CardOperationForm, self).__init__(*args, **kwargs)
+        self.fields['card'] = forms.IntegerField(label="Card number", required=True)

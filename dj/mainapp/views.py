@@ -65,13 +65,13 @@ def new_card(request):
                                      Accounts.objects.filter(clients=client)) +
                                tuple((str(-currency.id), f"New account in {currency.code}") for currency in
                                      Currencies.objects.all()))
-    form = CardForm(accounts_and_currencies, client.fullname.upper())
+    form = NewCardForm(accounts_and_currencies, client.fullname.upper())
 
     if request.method == "GET":
         return render(request, "input_page.html", {"form": form,
                                                    'operation': "New card", 'button_value': "Create card"})
 
-    form = CardForm(accounts_and_currencies, client.fullname.upper(), request.POST)
+    form = NewCardForm(accounts_and_currencies, client.fullname.upper(), request.POST)
     if not form.is_valid():
         return render(request, "input_page.html", {"form": form,
                                                    'operation': "New card", 'button_value': "Create card"})
@@ -112,8 +112,8 @@ def card_page(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     transactions = Transactions.objects.filter(
-        Q(sender_iban=card.account.iban) |
-        Q(receiver_iban=card.account.iban)
+        Q(sender_card_number=card.number) |
+        Q(receiver_card_number=card.number)
     )
     return render(request, "cards/main.html", {'card': card,
                                                'templates': Templates.objects.all(),
@@ -121,50 +121,117 @@ def card_page(request, number):
                                                'user_iban': card.account.iban})
 
 
-# Страница подтверждения операции
+def sending(account, other_account, transaction, value):
+    if not other_account:
+        account.balance -= value
+        account.save()
+        print("not other_account")
+    else:
+        if other_account.is_closed:
+            transaction.is_successful = False
+        else:
+            account.balance -= value
+            account.save()
+
+            if account.currency.id == other_account.currency.id:
+                other_account.balance += value
+            else:
+                other_account.balance += (
+                        value
+                        * Courses.objects.filter(currency=account.currency).latest('change_time').course_sale
+                        / Courses.objects.filter(currency=other_account.currency).latest('change_time').course_buy
+                )
+            other_account.save()
+
+
 @login_required
-def card_operation(request, number, template_id):
+def send_to_account(request, number):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
-    template = get_object_or_404(Templates, id=template_id)
     account = card.account
     balance = account.balance - account.balance_freeze
-    form = OperationForm(template, f"{balance:.2f}")
+    form = AccountOperationForm(balance, account.currency.code, "Message")
+    if request.method == "GET":
+        return render(request, "input_page.html", {"form": form, 'operation': "Sending to account",
+                                                   'button_value': "Send"})
+
+    form = AccountOperationForm(balance, account.currency.code, "Message", request.POST)
+    if not form.is_valid():
+        return render(request, "input_page.html", {"form": form, 'operation': "Sending to account",
+                                                   'button_value': "Send"})
+
+    value = form.cleaned_data["value"]
+    info = form.cleaned_data["info"]
+    other_iban = form.cleaned_data["iban"]
+    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
+                                              receiver_iban=other_iban,
+                                              currency=account.currency, value=value, info=info)
+
+    other_account = Accounts.objects.filter(iban=other_iban).first()
+    sending(account, other_account, transaction, value)
+    transaction.save()
+    return redirect(f'/cards/{number}/')
+
+
+@login_required
+def send_to_card(request, number):
+    client = get_object_or_404(Clients, user=request.user.id)
+    card = get_object_or_404(Cards, number=number, client=client)
+    account = card.account
+    balance = account.balance - account.balance_freeze
+    form = CardOperationForm(balance, account.currency.code, "Message")
+    if request.method == "GET":
+        return render(request, "input_page.html", {"form": form, 'operation': "Sending to card",
+                                                   'button_value': "Send"})
+
+    form = CardOperationForm(balance, account.currency.code, "Message", request.POST)
+    if not form.is_valid():
+        return render(request, "input_page.html", {"form": form, 'operation': "Sending to card",
+                                                   'button_value': "Send"})
+
+    value = Decimal(form.cleaned_data["value"])
+    info = form.cleaned_data["info"]
+    other_card = form.cleaned_data["card"]
+    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
+                                              receiver_card_number=other_card,
+                                              currency=account.currency, value=value, info=info)
+
+    other_account = Accounts.objects.filter(cards__number=other_card).first()
+    if other_account:
+        transaction.receiver_iban = other_account.iban
+        sending(account, other_account, transaction, value)
+    transaction.save()
+    return redirect(f'/cards/{number}/')
+
+
+# Страница подтверждения операции
+@login_required
+def template_operation(request, number, template_id):
+    client = get_object_or_404(Clients, user=request.user.id)
+    card = get_object_or_404(Cards, number=number, client=client)
+    account = card.account
+    balance = account.balance - account.balance_freeze
+    template = get_object_or_404(Templates, id=template_id)
+    form = OperationForm(balance, account.currency.code, template.info_label)
     if request.method == "GET":
         return render(request, "input_page.html", {"form": form, 'operation': template.description,
                                                    'button_value': "Send"})
 
-    form = OperationForm(template, balance, request.POST)
+    form = OperationForm(balance, account.currency.code, template.info_label, request.POST)
     if not form.is_valid():
         return render(request, "input_page.html", {"form": form, 'operation': template.description,
                                                    'button_value': "Send"})
 
     value = Decimal(form.cleaned_data["value"])
-    if value > balance:
-        return render(request, "input_page.html", {"form": form, 'operation': template.description,
-                                                   'button_value': "Send"})
-    account.balance -= value
-    account.save()
     info = form.cleaned_data["info"]
     other_iban = template.other_iban
-    if not other_iban:
-        other_iban = form.cleaned_data["iban"]
-
-    transaction = Transactions.objects.create(template=template, sender_iban=account.iban, receiver_iban=other_iban,
+    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
+                                              receiver_iban=other_iban,
                                               currency=account.currency, value=value, info=info)
-    transaction.save()
 
     other_account = Accounts.objects.filter(iban=other_iban).first()
-    if other_account:
-        if account.currency == other_account.currency:
-            other_account.balance += value
-        else:
-            other_account.balance += (
-                    value
-                    * Courses.objects.filter(currency=account.currency.id).latest('change_time').course_sale
-                    / Courses.objects.filter(currency=other_account.currency.id).latest('change_time').course_buy
-            )
-        other_account.save()
+    sending(account, other_account, transaction, value)
+    transaction.save()
     return redirect(f'/cards/{number}/')
 
 
@@ -175,12 +242,15 @@ def info(request, number):
     card = get_object_or_404(Cards, number=number, client=client)
     account = card.account
     info_dict = {
-        'number': card.number,
-        'cardholder_name': card.cardholder_name,
-        'expiration_date': card.expiration_date.strftime('%m/%y'),
-        'security_code': card.security_code,
+        'Card number': card.number,
+        'Cardholder name': card.cardholder_name,
+        'Expiration date': card.expiration_date.strftime('%m/%y'),
+        'Security code': card.security_code,
+        'Card is freeze': card.is_freeze,
         '———': '———',
         'iban': account.iban,
-        'balance': f"{account.balance: .2f} {account.currency}",
+        'Balance': f"{account.balance: .2f} {account.currency}",
+        'Freeze balance': f"{account.balance_freeze: .2f} {account.currency}",
+        'Account is closed': account.is_closed,
     }
     return render(request, "cards/info.html", {"info_dict": info_dict})

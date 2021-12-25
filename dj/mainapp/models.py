@@ -35,10 +35,11 @@ class Courses(models.Model):
 # 4. Счета клиентов в разных валютах
 class Accounts(models.Model):
     iban = models.CharField(max_length=28, primary_key=True)
+    clients = models.ManyToManyField(Clients)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=21, decimal_places=6)
     balance_freeze = models.DecimalField(max_digits=21, decimal_places=6, default=0)
-    clients = models.ManyToManyField(Clients)
+    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.iban
@@ -61,8 +62,9 @@ class Cards(models.Model):
 # 6. Шаблоны операций
 class Templates(models.Model):
     description = models.CharField(max_length=50)
-    other_iban = models.CharField(max_length=34, null=True)
+    other_iban = models.CharField(max_length=34)
     info_label = models.CharField(max_length=30, default="Note")
+    commission_percent = models.DecimalField(max_digits=9, decimal_places=6, default=0)  # ***.****** %
 
     def __str__(self):
         return self.description
@@ -70,12 +72,17 @@ class Templates(models.Model):
 
 # 7. Операции
 class Transactions(models.Model):
-    template = models.ForeignKey(Templates, on_delete=models.CASCADE)
+    template = models.ForeignKey(Templates, on_delete=models.CASCADE, null=True)
     sender_iban = models.CharField(max_length=34)
     receiver_iban = models.CharField(max_length=34)
+    sender_card_number = models.BigIntegerField(null=True)
+    receiver_card_number = models.BigIntegerField(null=True)
     currency = models.ForeignKey(Currencies, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=21, decimal_places=6)
     commission = models.DecimalField(max_digits=21, decimal_places=6, default=0)
     info = models.CharField(max_length=50)
     datetime = models.DateTimeField(auto_now_add=True)
     is_successful = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.template.description

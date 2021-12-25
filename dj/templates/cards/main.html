@@ -51,6 +51,12 @@
             </div>
             <div class="sep-horizontal"></div>
             <div id="container-templates">
+                <a class="template-button" href="send_to_account">Send to account</a>
+            </div>
+            <div id="container-templates">
+                <a class="template-button" href="send_to_card">Send to card</a>
+            </div>
+            <div id="container-templates">
                 {% for template in templates %}
                     <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
                 {% endfor %}
@@ -73,7 +79,11 @@
                                 {% endif %}
                             </td>
                             <td>
+                                {% if transaction.template %}
                                 {{ transaction.template.description }}
+                                {% else %}
+                                Sending by parameters
+                                {% endif %}
                             </td>
                             <td>
                                 {{ transaction.value|floatformat:2 }}
