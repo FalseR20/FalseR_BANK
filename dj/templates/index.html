@@ -7,8 +7,11 @@
 {% endblock head %}
 {% block body %}
     <div class="cards-panel">
+        {% now "Ymd" as today %}
         {% for card in cards %}
-            <a class="card-block grid but" href="/cards/{{ card.number }}/">
+            <a class="card-block grid but" href="/cards/{{ card.number }}/"
+                    {% if card.expiration_date|date:"Ymd" < today %} style="border-color: orangered"
+                    {% elif card.is_freeze %} style="border-color: dodgerblue" {% endif %}>
                 <div style="grid-area: number">{{ card.number|pretty_output }}</div>
                 <div style="grid-area: name">{{ card.cardholder_name|cut_cardholder_name:12 }}</div>
                 <div style="grid-area: date; text-align: right">{{ card.expiration_date|date:"m/y" }}</div>

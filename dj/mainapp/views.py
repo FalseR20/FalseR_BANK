@@ -22,8 +22,7 @@ def index(request):
     client = Clients.objects.get(user=request.user.id)
     cards = Cards.objects.filter(client=client)
     accounts = Accounts.objects.filter(clients=client)
-    return render(request, "index.html", {"client": client,
-                                          "cards": cards,
+    return render(request, "index.html", {"client": client, "cards": cards,
                                           "accounts": accounts})
 
 
@@ -115,10 +114,22 @@ def card_page(request, number):
         Q(sender_card_number=card.number) |
         Q(receiver_card_number=card.number)
     )
+    if card.expiration_date < datetime.date.today():
+        is_blocked = True
+        clr = "orangered"
+    elif card.is_freeze:
+        is_blocked = True
+        clr = "dodgerblue"
+    else:
+        is_blocked = False
+        clr = None
+
     return render(request, "cards/main.html", {'card': card,
                                                'templates': Templates.objects.all(),
                                                'transactions': transactions,
-                                               'user_iban': card.account.iban})
+                                               'user_iban': card.account.iban,
+                                               'is_blocked': is_blocked,
+                                               'clr': clr})
 
 
 def sending(account, other_account, transaction, value):
@@ -253,12 +264,12 @@ def card_info(request, number):
         'Freeze balance': f"{account.balance_freeze: .2f} {account.currency}",
         'Account is closed': account.is_closed,
     }
-    return render(request, "cards/info.html", {"info_dict": info_dict})
+    return render(request, "cards/info.html", {"description": "Info about card", "info_dict": info_dict})
 
 
 # Страничка с информацией о транзакции
 @login_required
-def card_info(request, number, transaction_id):
+def transaction_info(request, number, transaction_id):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     if not card:
@@ -276,9 +287,9 @@ def card_info(request, number, transaction_id):
         "Value": f"{transaction.value:.2f} {transaction.currency.code}",
         "Commission": f"{transaction.commission:.2f} {transaction.currency.code}",
         "Date and time": transaction.datetime,
-        template.info_label if template else "Message": transaction.info,
+        (template.info_label if template else "Message"): transaction.info,
         "Transaction is success": transaction.is_successful,
 
 
     }
-    return render(request, "cards/info.html", {"info_dict": info_dict})
+    return render(request, "cards/info.html", {"description": "Info about transaction", "info_dict": info_dict})

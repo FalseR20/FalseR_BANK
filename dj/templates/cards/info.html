@@ -3,7 +3,7 @@
     {% load static %}
     {% load pretty_output %}
     <link rel="stylesheet" href="{% static 'css/tables.css' %}">
-    <title>ALL INFO</title>
+    <title>{{ description }}</title>
     <style>
         h1 {
             text-align: center;
@@ -27,7 +27,7 @@
     </style>
 {% endblock head %}
 {% block body %}
-    <h1>Info about card</h1>
+    <h1>{{ description }}</h1>
     <table>
         {% for key, value in info_dict.items %}
             <tr>

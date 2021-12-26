@@ -6,6 +6,17 @@
     <link rel="stylesheet" href="{% static 'css/card_page.css' %}">
     <link rel="stylesheet" href="{% static 'css/tables.css' %}">
     <title>Card page</title>
+    {% if is_blocked %}
+        <style>
+            .template-button, .card-block.grid {
+                border-color: {{ clr }};
+            }
+
+            .template-button.inf {
+                border-color: var(--text-color)
+            }
+        </style>
+    {% endif %}
 {% endblock head %}
 {% block body %}
     <div id="container">
@@ -19,18 +30,21 @@
             </div>
             <div class="sep-horizontal"></div>
             <div id="container-templates">
-                <a class="template-button" href="send_to_account">Send to account</a>
+                <a class="template-button" {% if not is_blocked %} href="send_to_account" {% endif %}>Send to
+                    account</a>
             </div>
             <div id="container-templates">
-                <a class="template-button" href="send_to_card">Send to card</a>
+                <a class="template-button" {% if not is_blocked %} href="send_to_card" {% endif %}>Send to card</a>
             </div>
             <div id="container-templates">
                 {% for template in templates %}
-                    <a class="template-button" href="{{ template.id }}">{{ template.description }}</a>
+                    <a class="template-button" {% if not is_blocked %} href="{{ template.id }}" {% endif %}>
+                        {{ template.description }}
+                    </a>
                 {% endfor %}
             </div>
             <div class="sep-horizontal"></div>
-            <a class="template-button" href="info">ALL INFO</a>
+            <a class="template-button inf" href="info">ALL INFO</a>
         </div>
         <div class="sep-vertical"></div>
         <div id="container-right">
