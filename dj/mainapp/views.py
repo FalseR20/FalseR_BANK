@@ -17,13 +17,11 @@ def index(request):
         return render(request, "guest.html")
 
     if request.user.is_staff:
-        return render(request, "base.html", {"staff_user": request.user})
+        return redirect("admin/")
 
     client = Clients.objects.get(user=request.user.id)
     cards = Cards.objects.filter(client=client)
-    accounts = Accounts.objects.filter(clients=client)
-    return render(request, "index.html", {"client": client, "cards": cards,
-                                          "accounts": accounts})
+    return render(request, "index.html", {"client": client, "cards": cards})
 
 
 # Регистрация
@@ -64,9 +62,9 @@ def new_card(request):
                                      Accounts.objects.filter(clients=client)) +
                                tuple((str(-currency.id), f"New account in {currency.code}") for currency in
                                      Currencies.objects.all()))
-    form = NewCardForm(accounts_and_currencies, client.fullname.upper())
 
     if request.method == "GET":
+        form = NewCardForm(accounts_and_currencies, client.fullname.upper())
         return render(request, "input_page.html", {"form": form,
                                                    'operation': "New card", 'button_value': "Create card"})
 
@@ -136,7 +134,6 @@ def sending(account, other_account, transaction, value):
     if not other_account:
         account.balance -= value
         account.save()
-        print("not other_account")
     else:
         if other_account.is_closed:
             transaction.is_successful = False
@@ -221,10 +218,12 @@ def template_operation(request, number, template_id):
     client = get_object_or_404(Clients, user=request.user.id)
     card = get_object_or_404(Cards, number=number, client=client)
     account = card.account
+    if card.is_freeze or card.expiration_date < datetime.date.today() or account.is_closed:
+        return redirect("/")
     balance = account.balance - account.balance_freeze
     template = get_object_or_404(Templates, id=template_id)
-    form = OperationForm(balance, account.currency.code, template.info_label)
     if request.method == "GET":
+        form = OperationForm(balance, account.currency.code, template.info_label)
         return render(request, "input_page.html", {"form": form, 'operation': template.description,
                                                    'button_value': "Send"})
 
@@ -236,9 +235,9 @@ def template_operation(request, number, template_id):
     value = Decimal(form.cleaned_data["value"])
     info = form.cleaned_data["info"]
     other_iban = template.other_iban
-    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
-                                              receiver_iban=other_iban,
-                                              currency=account.currency, value=value, info=info)
+    transaction = Transactions(sender_iban=account.iban, sender_card_number=number,
+                               receiver_iban=other_iban,
+                               currency=account.currency, value=value, info=info)
 
     other_account = Accounts.objects.filter(iban=other_iban).first()
     sending(account, other_account, transaction, value)
@@ -289,7 +288,6 @@ def transaction_info(request, number, transaction_id):
         "Date and time": transaction.datetime,
         (template.info_label if template else "Message"): transaction.info,
         "Transaction is success": transaction.is_successful,
-
 
     }
     return render(request, "cards/info.html", {"description": "Info about transaction", "info_dict": info_dict})
