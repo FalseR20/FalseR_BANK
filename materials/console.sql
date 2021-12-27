@@ -32,9 +32,8 @@ values (1000000, 1000000, 1, now()),
        (2845000, 2855000, 3, now());
 
 
-insert into mainapp_templates(description, other_iban, info_label)
-values ('Send to account МТС', 'BY51MMBN30120086600109330000', 'Number of phone'),
-       ('Send to other account', null, 'Message');
+insert into mainapp_templates(description, other_iban, info_label, commission_percent)
+values ('Send to account МТС', 'BY51MMBN30120086600109330000', 'Number of phone', 0);
 
 
 -- delete
