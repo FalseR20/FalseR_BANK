@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 # 0. User из "коробки" - Пользователи
 
-# 1. Клиенты - one-to-one с User (User может и не быть)
+# 1. Клиенты - one-to-one с User (User не обязательно связан с клиентом)
 class Clients(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     fullname = models.CharField(max_length=30)
