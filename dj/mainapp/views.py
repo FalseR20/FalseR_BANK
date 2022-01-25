@@ -132,22 +132,21 @@ def sending(account, other_account, transaction, value):
     if not other_account:
         account.balance -= value
         account.save()
+    elif other_account.is_closed or account.iban == other_account.iban:
+        transaction.is_successful = False
     else:
-        if other_account.is_closed:
-            transaction.is_successful = False
-        else:
-            account.balance -= value
-            account.save()
+        account.balance -= value
+        account.save()
 
-            if account.currency.id == other_account.currency.id:
-                other_account.balance += value
-            else:
-                other_account.balance += (
-                        value
-                        * Courses.objects.filter(currency=account.currency).latest('change_time').course_sale
-                        / Courses.objects.filter(currency=other_account.currency).latest('change_time').course_buy
-                )
-            other_account.save()
+        if account.currency.id == other_account.currency.id:
+            other_account.balance += value
+        else:
+            other_account.balance += (
+                    value
+                    * Courses.objects.filter(currency=account.currency).latest('change_time').course_sale
+                    / Courses.objects.filter(currency=other_account.currency).latest('change_time').course_buy
+            )
+        other_account.save()
 
 
 @login_required
