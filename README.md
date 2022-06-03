@@ -34,6 +34,14 @@ Also, you need to add currencies and default courses (BYN / CUR * 1 000 000) in 
 python manage.py runserver
 ```
 
+## Or with using docker
+
+```shell
+sudo docker-compose build
+sudo docker-compose up
+```
+
+
 ## Screenshots
 
 ![alt text](materials/screenshots/img.png "Main Window")

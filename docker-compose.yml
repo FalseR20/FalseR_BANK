@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  postgresql:
+    image: postgres:12
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=falser_bank
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=falser_bank
+    ports:
+      - "5432:5432"
+
+  django:
+    build: ./dj
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - postgresql

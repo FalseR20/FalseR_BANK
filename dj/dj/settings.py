@@ -25,7 +25,7 @@ SECRET_KEY = get_random_secret_key()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']
 
 # Application definition
 
@@ -79,7 +79,7 @@ DATABASES = {
         'NAME': 'falser_bank',
         'USER': 'falser_bank',
         'PASSWORD': '12345678',
-        'HOST': '127.0.0.1',
+        'HOST': 'postgresql',
         'PORT': '5432',
     }
 }
