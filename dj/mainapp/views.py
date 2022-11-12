@@ -95,9 +95,12 @@ def new_card(request):
         client=client,
         account=account,
         cardholder_name=cardholder_name,
-        expiration_date=datetime.date(year=datetime.datetime.now().year + time_post,
-                                      month=datetime.datetime.now().month,
-                                      day=31))
+        expiration_date=datetime.date(
+            year=datetime.datetime.now().year + time_post,
+            month=datetime.datetime.now().month + 1,
+            day=1
+        ) - datetime.timedelta(days=1)
+    )
     return redirect('/')
 
 

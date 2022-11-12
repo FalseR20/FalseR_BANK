@@ -20,13 +20,26 @@ source venv\bin\activate
 pip install -r requirements.txt
 ```
 
+
+#### PostgreSQL
+
+```shell
+sudo -u postgres psql
+```
+
+```postgresql
+create database falser_bank;
+create user falser_bank with encrypted password '12345678';
+grant all privileges on database falser_bank to falser_bank;
+```
+
 ## Tuning
 ```shell
 cd dj
 python manage.py migrate
 python manage.py createsuperuser
 ```
-Also, you need to add currencies and default courses (BYN / CUR * 1 000 000) in admin panel
+Also, you need to add currencies and default courses (CUR / BYN * 1 000 000) in admin panel
 
 ## Running
 
