@@ -42,13 +42,23 @@ python manage.py createsuperuser
 
 Also, you need to add currencies and default courses (CUR / BYN * 1 000 000) in admin panel
 
+#### React
+
+```shell
+sudo apt install npm
+cd ./frontend
+npm install
+npm run dev
+cd ..
+```
+
 ## Running
 
 ```shell
 python manage.py runserver
 ```
 
-## Or with using docker
+## Or with using docker (not actual)
 
 ```shell
 sudo docker-compose build
@@ -63,3 +73,7 @@ sudo docker-compose up
 ![](materials/screenshots/img_3.png "Creating card")
 ![](materials/screenshots/img_4.png "Card page")
 ![](materials/screenshots/img_5.png "Result")
+
+## Some links
+
+- https://www.valentinog.com/blog/drf/

@@ -4,9 +4,17 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
+from rest_framework import generics
+
 from .models import *
 from .forms import *
 from .bank_functions import *
+from .serializers import CurrenciesSerializer
+
+
+class CurrenciesListCreate(generics.ListCreateAPIView):
+    queryset = Currencies.objects.all()
+    serializer_class = CurrenciesSerializer
 
 
 # Главная страница
