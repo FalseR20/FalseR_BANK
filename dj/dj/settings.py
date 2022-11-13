@@ -73,19 +73,14 @@ WSGI_APPLICATION = 'dj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-host = os.getenv('HOST')
-if host is None:
-    host = "localhost"
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'falser_bank',
-        'USER': 'falser_bank',
-        'PASSWORD': '12345678',
-        'HOST': host,
-        'PORT': '5432',
+        'NAME': os.getenv("POSTGRES_NAME", "falser_bank"),
+        'USER': os.getenv("POSTGRES_USER", "falser_bank"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD", "12345678"),
+        'HOST': os.getenv("POSTGRES_HOST", "localhost"),
+        'PORT': os.getenv("POSTGRES_PORT", "5432"),
     }
 }
 
