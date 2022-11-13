@@ -20,7 +20,6 @@ source venv\bin\activate
 pip install -r requirements.txt
 ```
 
-
 #### PostgreSQL
 
 ```shell
@@ -34,11 +33,13 @@ grant all privileges on database falser_bank to falser_bank;
 ```
 
 ## Tuning
+
 ```shell
 cd dj
 python manage.py migrate
 python manage.py createsuperuser
 ```
+
 Also, you need to add currencies and default courses (CUR / BYN * 1 000 000) in admin panel
 
 ## Running
@@ -54,12 +55,11 @@ sudo docker-compose build
 sudo docker-compose up
 ```
 
-
 ## Screenshots
 
-![alt text](materials/screenshots/img.png "Main Window")
-![alt text](materials/screenshots/img_1.png "Registration window")
-![alt text](materials/screenshots/img_2.png "Cards")
-![alt text](materials/screenshots/img_3.png "Creating card")
-![alt text](materials/screenshots/img_4.png "Card page")
-![alt text](materials/screenshots/img_5.png "Result")
+![](materials/screenshots/img.png "Main Window")
+![](materials/screenshots/img_1.png "Registration window")
+![](materials/screenshots/img_2.png "Cards")
+![](materials/screenshots/img_3.png "Creating card")
+![](materials/screenshots/img_4.png "Card page")
+![](materials/screenshots/img_5.png "Result")
