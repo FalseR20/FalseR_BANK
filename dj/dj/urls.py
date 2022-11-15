@@ -18,7 +18,7 @@ urlpatterns = [
     re_path(r'cards/(?P<number>\d+)/(?P<template_id>\d+)/$', mainapp.views.template_operation),
     re_path(r'cards/(?P<number>\d+)/transactions/(?P<transaction_id>\d+)/$', mainapp.views.transaction_info),
     # Mainapp api
-    path('api/currencies/', mainapp.views.CurrenciesListCreate.as_view()),
+    path('api/cards/', mainapp.views.react_get_cards),
 
     # Frontend with react
     path("react/", include("frontend.urls")),

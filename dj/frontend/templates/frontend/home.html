@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/themes/pink_dark_react.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <title>Main Page</title>
+{% endblock head %}
+{% block body %}
+    <div id="app-home"></div>
+    <script src="{% static "frontend/main.js" %}"></script>
+{% endblock body %}

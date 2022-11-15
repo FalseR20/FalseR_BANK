@@ -1,1 +1,1 @@
-import App from "./components/App";
+import AppHome from "./components/AppHome";

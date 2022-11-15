@@ -2,17 +2,18 @@
 <html lang="en-us">
 <head>
     <meta charset="UTF-8">
-    {% block head %}
-        {% load static %}
-        <title>Default page</title>
-    {% endblock head %}
+    {% load static %}
     <link rel="stylesheet" href="{% static 'css/themes/pink_dark.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block head %}
+        <title>Default page</title>
+    {% endblock head %}
 </head>
 <body>
 <div id="div-top">
     <div>
         <a id="button-main" href="/">FalseR • 𝔹𝔸ℕ𝕂</a>
+        <a class="button-top" href="/react">React</a>
     </div>
     <div>
         <a class="button-top" href="/sign_in">Sign in</a>

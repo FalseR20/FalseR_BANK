@@ -37,6 +37,7 @@
 }
 
 .card-block.new {
+    line-height: 150px;
     font-size: 110px;
     text-align: center;
 }

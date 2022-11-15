@@ -1,20 +1,24 @@
 import datetime
 
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout
-from rest_framework import generics
+from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from .models import *
-from .forms import *
 from .bank_functions import *
-from .serializers import CurrenciesSerializer
+from .forms import *
+from .models import *
+from .serializers import *
 
 
-class CurrenciesListCreate(generics.ListCreateAPIView):
-    queryset = Currencies.objects.all()
-    serializer_class = CurrenciesSerializer
+@api_view(["GET"])
+def react_get_cards(request):
+    client = Clients.objects.get(user=request.user)
+    cards = Cards.objects.filter(client=client)
+    card_serializer = CardsSerializer(cards, many=True)
+    return Response(card_serializer.data)
 
 
 # Главная страница
@@ -34,13 +38,21 @@ def index(request):
 def sign_up(request):
     if request.method == "GET":
         form = RegistrationForm()
-        return render(request, "input_page.html", {"form": form, 'operation': "Registration",
-                                                   'button_value': "Sign up", 'is_need_agreement': True})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Registration",
+                'button_value': "Sign up", 'is_need_agreement': True
+            }
+        )
 
     form = RegistrationForm(request.POST)
     if not form.is_valid():
-        return render(request, "input_page.html", {"form": form, 'operation': "Registration",
-                                                   'button_value': "Sign up", 'is_need_agreement': True})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Registration",
+                'button_value': "Sign up", 'is_need_agreement': True
+            }
+        )
 
     username = form.cleaned_data["username"]
     fullname = form.cleaned_data["fullname"]
@@ -64,20 +76,32 @@ def sign_out(request):
 @login_required
 def new_card(request):
     client = get_object_or_404(Clients, user=request.user.id)
-    accounts_and_currencies = (tuple((account.iban, f"{account.iban} ({account.currency.code})") for account in
-                                     Accounts.objects.filter(clients=client)) +
-                               tuple((str(-currency.id), f"New account in {currency.code}") for currency in
-                                     Currencies.objects.all()))
+    accounts_and_currencies = (tuple(
+        (account.iban, f"{account.iban} ({account.currency.code})") for account in
+        Accounts.objects.filter(clients=client)
+    ) +
+                               tuple(
+                                   (str(-currency.id), f"New account in {currency.code}") for currency in
+                                   Currencies.objects.all()
+                               ))
 
     if request.method == "GET":
         form = NewCardForm(accounts_and_currencies, client.fullname.upper())
-        return render(request, "input_page.html", {"form": form,
-                                                   'operation': "New card", 'button_value': "Create card"})
+        return render(
+            request, "input_page.html", {
+                "form": form,
+                'operation': "New card", 'button_value': "Create card"
+            }
+        )
 
     form = NewCardForm(accounts_and_currencies, client.fullname.upper(), request.POST)
     if not form.is_valid():
-        return render(request, "input_page.html", {"form": form,
-                                                   'operation': "New card", 'button_value': "Create card"})
+        return render(
+            request, "input_page.html", {
+                "form": form,
+                'operation': "New card", 'button_value': "Create card"
+            }
+        )
 
     system_post = int(form.cleaned_data["system"])
     time_post = int(form.cleaned_data["time"])
@@ -87,8 +111,10 @@ def new_card(request):
     if account_post[0] == '-':
         currency_id = -int(account_post)
         while True:
-            random_iban = make_iban("1" + Currencies.objects.get(id=currency_id).code,
-                                    f"{random.randint(0, 9999_9999_9999_9999):016d}")
+            random_iban = make_iban(
+                "1" + Currencies.objects.get(id=currency_id).code,
+                f"{random.randint(0, 9999_9999_9999_9999):016d}"
+            )
             if not Accounts.objects.filter(iban=random_iban).first():
                 break
         account = client.accounts_set.create(iban=random_iban, currency_id=currency_id, balance=100)
@@ -131,12 +157,16 @@ def card_page(request, number):
         is_blocked = False
         clr = None
 
-    return render(request, "cards/main.html", {'card': card,
-                                               'templates': Templates.objects.all(),
-                                               'transactions': transactions,
-                                               'user_iban': card.account.iban,
-                                               'is_blocked': is_blocked,
-                                               'clr': clr})
+    return render(
+        request, "cards/main.html", {
+            'card': card,
+            'templates': Templates.objects.all(),
+            'transactions': transactions,
+            'user_iban': card.account.iban,
+            'is_blocked': is_blocked,
+            'clr': clr
+        }
+    )
 
 
 def sending(account, other_account, transaction, value):
@@ -153,9 +183,9 @@ def sending(account, other_account, transaction, value):
             other_account.balance += value
         else:
             other_account.balance += (
-                    value
-                    * Courses.objects.filter(currency=account.currency).latest('change_time').course_sale
-                    / Courses.objects.filter(currency=other_account.currency).latest('change_time').course_buy
+                value
+                * Courses.objects.filter(currency=account.currency).latest('change_time').course_sale
+                / Courses.objects.filter(currency=other_account.currency).latest('change_time').course_buy
             )
         other_account.save()
 
@@ -168,20 +198,30 @@ def send_to_account(request, number):
     balance = account.balance - account.balance_freeze
     form = AccountOperationForm(balance, account.currency.code, "Message")
     if request.method == "GET":
-        return render(request, "input_page.html", {"form": form, 'operation': "Sending to account",
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Sending to account",
+                'button_value': "Send"
+            }
+        )
 
     form = AccountOperationForm(balance, account.currency.code, "Message", request.POST)
     if not form.is_valid():
-        return render(request, "input_page.html", {"form": form, 'operation': "Sending to account",
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Sending to account",
+                'button_value': "Send"
+            }
+        )
 
     value = form.cleaned_data["value"]
     info = form.cleaned_data["info"]
     other_iban = form.cleaned_data["iban"]
-    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
-                                              receiver_iban=other_iban,
-                                              currency=account.currency, value=value, info=info)
+    transaction = Transactions.objects.create(
+        sender_iban=account.iban, sender_card_number=number,
+        receiver_iban=other_iban,
+        currency=account.currency, value=value, info=info
+    )
 
     other_account = Accounts.objects.filter(iban=other_iban).first()
     sending(account, other_account, transaction, value)
@@ -197,20 +237,30 @@ def send_to_card(request, number):
     balance = account.balance - account.balance_freeze
     form = CardOperationForm(balance, account.currency.code, "Message")
     if request.method == "GET":
-        return render(request, "input_page.html", {"form": form, 'operation': "Sending to card",
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Sending to card",
+                'button_value': "Send"
+            }
+        )
 
     form = CardOperationForm(balance, account.currency.code, "Message", request.POST)
     if not form.is_valid():
-        return render(request, "input_page.html", {"form": form, 'operation': "Sending to card",
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': "Sending to card",
+                'button_value': "Send"
+            }
+        )
 
     value = Decimal(form.cleaned_data["value"])
     info = form.cleaned_data["info"]
     other_card = form.cleaned_data["card"]
-    transaction = Transactions.objects.create(sender_iban=account.iban, sender_card_number=number,
-                                              receiver_card_number=other_card,
-                                              currency=account.currency, value=value, info=info)
+    transaction = Transactions.objects.create(
+        sender_iban=account.iban, sender_card_number=number,
+        receiver_card_number=other_card,
+        currency=account.currency, value=value, info=info
+    )
 
     other_account = Accounts.objects.filter(cards__number=other_card).first()
     if other_account:
@@ -232,20 +282,30 @@ def template_operation(request, number, template_id):
     template = get_object_or_404(Templates, id=template_id)
     if request.method == "GET":
         form = OperationForm(balance, account.currency.code, template.info_label)
-        return render(request, "input_page.html", {"form": form, 'operation': template.description,
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': template.description,
+                'button_value': "Send"
+            }
+        )
 
     form = OperationForm(balance, account.currency.code, template.info_label, request.POST)
     if not form.is_valid():
-        return render(request, "input_page.html", {"form": form, 'operation': template.description,
-                                                   'button_value': "Send"})
+        return render(
+            request, "input_page.html", {
+                "form": form, 'operation': template.description,
+                'button_value': "Send"
+            }
+        )
 
     value = Decimal(form.cleaned_data["value"])
     info = form.cleaned_data["info"]
     other_iban = template.other_iban
-    transaction = Transactions(sender_iban=account.iban, sender_card_number=number,
-                               receiver_iban=other_iban,
-                               currency=account.currency, value=value, info=info)
+    transaction = Transactions(
+        sender_iban=account.iban, sender_card_number=number,
+        receiver_iban=other_iban,
+        currency=account.currency, value=value, info=info
+    )
 
     other_account = Accounts.objects.filter(iban=other_iban).first()
     sending(account, other_account, transaction, value)
